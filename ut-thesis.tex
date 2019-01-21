@@ -72,6 +72,7 @@
 %% single, one-and-a-half, or double spaced (see the `setspace' package
 %% for details).
 
+\usepackage{acronym}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                                    %%
@@ -87,7 +88,7 @@
 
 %% *** Change this example to appropriate values. ***
 \degree{Bachelor of Applied Science in Engineering Science}
-\department{Division of Engineering Science}
+\department{Engineering Science}
 \gradyear{2019}
 \author{Runjie (Bill) Shi}
 \title{Glaucoma Progression Prediction Using Machine Learning 
@@ -133,6 +134,7 @@
 \begin{abstract}
 %% *** Put your Abstract here. ***
 %% (At most 150 words for M.Sc. or 350 words for Ph.D.)
+Abstract
 \end{abstract}
 
 %% Anything placed between the abstract and table of contents will
@@ -176,6 +178,17 @@
 %% You can add commands here to generate any other material that belongs
 %% in the head matter (for example, List of Plates, Index of Symbols, or
 %% List of Appendices).
+
+\chapter*{List of Abbreviations}
+\begin{acronym}[LSTM]
+	\acro{HFA}{Humphrey Field Analyzer}
+	\acro{IOP}{Intraocular pressure}
+	\acro{OCT}{Optical Coherence Tomography}
+	\acro{VF}{Visual Field}
+	\acro{LSTM}{Long short-term memory}
+	\acro{CNN}{Convolutional Neural Network}
+	\acro{RNN}{Recurrent Neural Network}
+\end{acronym}
 
 %% End of the preliminary sections: reset page style and numbering.
 \end{preliminary}
