@@ -1,21 +1,111 @@
 \chapter{Introduction and Literature Review}
 
-\section{Glaucoma}
+Glaucoma is a group of progressive optic neuropathies where vision loss results from slow progressive degeneration of retinal ganglion cells and their axons. \cite{Weinreb2004} Patients are typically elderly. The loss of vision is irreversible. As a result, it is a leading cause of blindness worldwide. 
 
-Glaucoma is a group of progressive optic neuropathies where vision loss results from slow progressive degeneration of retinal ganglion cells and their axons \cite{Yamao2017} [1]. Currently, the pathophysiology of glaucoma is not well understood and there are no models that can robustly characterize glaucoma progression [2]. Glaucoma treatment relies heavily on accurate and timely prediction of the progress of the disease where patients with slowly progressing glaucoma might only require active surveillance, while fast progressors would require intervention. Since glaucoma can eventually cause blindness, an accurate prediction of the progress of the disease will support optimal treatment decisions that are critical for the patient’s quality of life.  
+If glaucoma is detected and monitored in its early stages, it is treatable and can be reasonably well managed. This detection and monitoring relies upon imaging, and psycho-physical tests. A typical procedure includes examination of the optic disk, \ac{RNFL} with \ac{OCT}, measurement of \ac{IOP}, and \ac{VF} test.
 
-\section{Testing for Glaucoma}
+Currently, the pathophysiology of glaucoma is not well understood and there are no models that can robustly characterize glaucoma progression \cite{Chen2014}. Glaucoma treatment relies heavily on accurate and timely prediction of the progress of the disease where patients with slowly progressing glaucoma might only require active surveillance, while fast progressors would require immediate intervention. Since glaucoma can eventually cause blindness, an accurate prediction of the progress of the disease will support optimal treatment decisions that are critical for the patient’s quality of life.  
 
-\section{Intraocular Pressure Measurement}
+\section{Background: Visual Field Test}
 
-\section{Visual Field Test}
+\ac{VF} testing is the current gold standard in clinical functional evaluation of glaucoma patients. It is used to both diagnose glaucoma, and in patients with confirmed or suspected glaucoma, to monitor the progression of the disease. Global VF indices such as \ac{MD} (also known as Mean Deviation Index), \ac{PSD}, and \ac{VFI} (also known as Glaucoma Progression Index) are used to monitor the integrity of the VF. These indices characterize each visual field with few statistical measures that attempt to capture the relevant clinical information to diagnose glaucoma and determine the progression of the disease. 
 
-\ac{VF}
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=0.5\textwidth]{hfa}
+	\caption{An \ac{HFA} (``Humphrey VF'' by Sej licensed under \href{https://creativecommons.org/licenses/by-sa/4.0/deed.en}{CC BY-SA 4.0})}
+	\label{fig:hfa}
+\end{figure} 
 
-\section{Optical Coherence Tomography}
+\begin{figure}[p]
+	\includegraphics[width=\textwidth]{report}
+	\caption{Example of an \ac{HFA} \ac{VF} test report}
+	\label{fig:report}
+\end{figure}
 
-\section{Methods for Predicting Progression}
+\begin{figure}[p]
+	\includegraphics[width=\textwidth]{gpa}
+	\caption{Example of an \ac{HFA} progression analysis test report (Image from Carl Zeiss Meditec, Inc.)}
+	\label{fig:gpa}
+\end{figure}
 
-\subsection{Clinical Methods}
+\subsection{Single Field Analysis Metrics}
 
-\subsection{Proposed Methods in Literature}
+Historically Heijl et al. developed the two classic metrics for summarizing a \ac{VF}: \ac{MD} and \ac{PSD}. \cite{Heijl1987} First and foremost, to evaluate one's visual field, it is necessary to know the appropriate reference threshold ($N$) at each field location with an associated variance ($\sigma^2$). It is widely accepted that the human \ac{DLS} thresholds, in units of dB, can be modeled as a linear function of age. \cite{Heijl1987a} In general, the slope of loss of sensitivity is larger in mid-periphery than para-centrally, range from $0.5$ to $1$ dB/decade. The variance is also higher in mid-periphery than para-centrally. 
+
+\ac{MD} is a measure of a \ac{VF}'s general mean value as compared to the reference. Mathematically, it is the mean of the difference between the measured threshold ($x$) and the reference $N$, weighted by the variance. Points with higher variance are considered less reliable and given less weight in the \ac{MD} metric. MD values typically range from negative to slightly positive. Negative MD values indicate less than normal sensitivity in the entire \ac{VF} and the patient may be suspected of glaucoma and/or cataract.
+
+\begin{equation}
+\textrm{MD} =\frac{ 
+\sum\limits_{i=1}^{n} \left\{
+\frac{1}{\sigma_{i}^2} (x_i-N_i)
+\right\} }{
+\sum\limits_{i=1}^{n} 
+\frac{1}{\sigma_{i}^2} 
+}
+\end{equation}
+
+While the \ac{MD} is an intuitive summary metric for a \ac{VF}, it captures the general reduction in sensitivity, which is typical of cataract, but does not capture local asymmetries (variations) in the field, which is typical in a glaucomatous field. \ac{PSD} is another metric that tries to capture this asymmetry. Mathematically, it is defined as the weighted variance of the field, as defined below. \ac{PSD} is always positive, with higher value indicating a more varying field with a higher likelihood of glaucoma. 
+
+\begin{equation}
+\textrm{PSD}^2 =
+	\frac{1}{n}
+	\sum\limits_{i=1}^{n} 
+	\sigma_{i}^2
+	\times
+	\frac{1}{n-1}
+	\sum\limits_{i=1}^{n} 
+	\frac{(x_i-N_i-\textrm{MD})^2}{\sigma_{i}^2} 
+\end{equation}
+
+Recently the new \ac{VFI} metric has become available on \ac{HFA} field analysis reports. It attempts to reduce the influence of cataract on \ac{MD} and is argued to be a better indicator for glaucoma doctors. It is reported as a percentage with $100\%$ being a perfectly healthy field and $0\%$ being a blind field. \cite{Bengtsson2008}
+
+Another metric developed is \ac{GHT}. It combines measurement of the overall field sensitivity and differences between the top and half hemi-fields into a few hand-crafted ``if'' statements to report a field as one of the following categories for easy interpretation: \cite{Asman1992}
+
+\begin{itemize}
+	\item Abnormally high sensitivity
+	\item Outside normal limits
+	\item Borderline
+	\item General reduction of sensitivity
+	\item Within normal limits
+\end{itemize}
+
+These four metrics can be seen in figure \ref{fig:report}.
+
+\subsection{Trend-Based Progression Analysis}
+
+Currently, the main approach to determine glaucoma progression is a trend-based analysis by performing \ac{OLSLR} on MD. The \ac{HFA} Guided Progression Analysis reports \ac{OLSLR} on its \ac{VFI} that offers similar information. The fitted trend is typically extended five years into the future, and the slope of the line is used to classify patients into three categories (mild: $0$ to $-0.4$ dB/year, moderate: $-0.5$ to $-2$ dB/year, and severe: $<-2$ dB/year). \cite{Chauhan2008} Glaucoma specialists combine these data with additional information such as the thickness of the retinal fiber layer in the macula, \ac{IOP} and the cup-to-disk ratio to determine the optimal plan of treatment. 
+
+\subsection{Limitations}
+
+The current method of evaluating \ac{VF} information is limited in its robustness. For example, \ac{VFI} may remain at $100\%$ in $22\%$ patients who have MD of $-5$ dB or better. Hence early progression (up to $-5$ dB) may be missed if VFI alone is used. Moreover, based on a semi-annual follow-up schedule, at least five fields are required to produce an accurate prediction for a disease that is progressing at moderate rates (the slope of the OLSLR on MD is $-1.0$ dB/year). \cite{Chauhan2008} This means that meaningful decision about the progression of the disease cannot be made until at least two years after the initial visit. 
+
+Last but not least, \ac{OLSLR} is a simple model chosen based on its mathematical simplicity but not upon physiology. Since glaucoma can be caused by multiple neurological pathways, it is argued that the progression trend is likely nonlinear in nature. \cite{Pathak2013} 
+
+In short, the use of linear regression to predict \ac{VF} loss and the need for a long observation period impede timely and accurate decision making by the clinician. A better method that can provide more accurate information to the clinician in fewer \ac{VF} tests can allow more effective intervention for glaucoma patients in the disease's early stages. This is the primary motivation for the alternative models reviewed below and for the current work.
+
+\section{Literature Review: Alternative Progression Models}
+
+This section will review alternatives to the \ac{OLSLR} on MD model for \ac{VF} progression prediction. 
+
+\subsection{Event-Based Analysis}
+
+A complement to trend-based analysis is event-based analysis. A popular implementation is the Glaucoma Progression Analysis (GPA) since it is provided by the \ac{HFA}. Instead of fitting a trend on a global index, the progression of each point in the field with respect to a baseline measurement is considered. On average, this method is found to have low false-positive rate. However, this is dependent upon achieving a good baseline and does not work for patients with severe VF loss. \cite{Aref2017}
+
+Other non-linear models suggest fitting an exponential model to the VF indices. For example, Pathak et al. argued that an exponential model is better supported by recent knowledge of structure-function relationship than a linear model. [4] They demonstrated that a linear mixed-effect (LME) approach with an exponential model provided significantly better prediction of glaucoma progression than linear models. However, it is also pointed out that even though the LME approach has better results than the OLSLR it still cannot capture the full extent of glaucomatous VF change.
+
+Other innovative approaches to the glaucoma progression problem in the literature include:
+•	Pointwise linear regression (PLR): Developed for improving early detection, PLR combines event-based and trend-based analysis [6]. 
+•	Analysis with Non-Stationary Weibull Error Regression and Spatial Enhancement (ANSWERS): Using spatial correlation between points and incorporating non-stationary variability; progression detection was found to be better especially in short time series [7].
+•	Spatially filtering VF data before PLR analysis: By applying a spatial filter that incorporates physiological relationships between measured contrast sensitivities at test points within the VF, the specificity of the PLR method is not affected but the sensitivity of detecting the rate of progression is improved [8].
+
+The above methods use different approaches to improve the prediction of glaucoma progression and demonstrate the complexity of the prediction task. This is not surprising due to the complex nature of the disease. A natural step forward involves leveraging the power of modern machine learning (ML) techniques to integrate features such as non-linear trends, correlation between VF test locations, field patterns, etc. into a single model.
+ 
+Existing studies have demonstrated the usefulness of ML in glaucoma care. For example, Asaoka et al. compared the performance of traditional ML classifiers with that of a deep feed-forward neural network (FNN) in diagnosing preperimetric glaucoma with VF data [9]. Their FNN model performed significantly better than other methods. In another study, Yousefi et al. applied clustering algorithms to extract VF patterns as features, then adapted the traditional linear regression algorithm to model the features to generate the predictions [10]. The ML-based index for the detection of glaucoma progression outperformed current methods. 
+
+However, these studies either did not directly address the problem of predicting VF progression or only used traditional ML methods for initial feature extraction. In a recent study that fully utilized the power of ML for the prediction task, Wen et al. [11] used deep learning network to predict future VF given the measurements of a single current VF. Their deep learning network demonstrated amazing capability to generate prediction for future VFs for up to 5.5 years with a correlation of 0.92 between the predicted MD and actual future MD (average difference of 0.41 dB). Their results suggest the tremendous potential of this research area. 
+
+Another benefit of using an ML model is the ability to use VF data (i.e. functional indication of VF integrity) and OCT data (i.e. structural indication for the integrity of the retina) at the same time. It is known that by utilizing both VF and OCT data the sensitivity of glaucoma detection can be improved [12], [13]. Multivariate models including both VF and OCT have also been shown to be successful [14]. However, there is limited research on combining VF and OCT features through a ML model. A limited attempt to explore this idea by Silva et al. did not produce better results than those obtained by VF only parameters [15]. 
+
+In our study we plan to use ML models that combine VF and OCT data for prediction of disease progression.  Specifically, we will use a deep Reinforcement Learning (RL) approach to the glaucoma progression problem. Deep RL has gained attention lately due to its use in solving seemingly impossible problems. The most well-known example is solving the ancient GO game, which is considered to be orders of magnitude more difficult than chess and other board games [16]. RL has also been used in the context of healthcare for discovering optimal, individualized treatment strategies for lung cancer [17][18], HIV [19] and neurological disorders [20]. To the best of our knowledge this will be the first study to use RL to predict glaucoma progression. 
+

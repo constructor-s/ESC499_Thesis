@@ -60,7 +60,7 @@
 %%    further customize the layout and/or formatting of the document.
 
 %% *** Add any desired options. ***
-\documentclass{ut-thesis}
+\documentclass[onehalfspaced, 12pt]{ut-thesis}
 
 %% *** Add \usepackage declarations here. ***
 %% The standard packages `geometry' and `setspace' are already loaded by
@@ -73,6 +73,10 @@
 %% for details).
 
 \usepackage{acronym}
+\usepackage{graphicx}
+\graphicspath{ {./figures/} }
+\usepackage{hyperref}
+\usepackage{subcaption}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                                    %%
@@ -131,11 +135,11 @@
 
 %% This generates the abstract page, with the line spacing adjusted
 %% according to SGS guidelines.
-\begin{abstract}
+% \begin{abstract}
 %% *** Put your Abstract here. ***
 %% (At most 150 words for M.Sc. or 350 words for Ph.D.)
-Abstract
-\end{abstract}
+% Abstract
+% \end{abstract}
 
 %% Anything placed between the abstract and table of contents will
 %% appear on a separate page since the abstract ends with \newpage and
@@ -180,14 +184,21 @@ Abstract
 %% List of Appendices).
 
 \chapter*{List of Abbreviations}
-\begin{acronym}[LSTM]
+\begin{acronym}[OLSLR]
+	\acro{RNFL}{retinal nerve fibre layer}
 	\acro{HFA}{Humphrey Field Analyzer}
-	\acro{IOP}{Intraocular pressure}
-	\acro{OCT}{Optical Coherence Tomography}
-	\acro{VF}{Visual Field}
-	\acro{LSTM}{Long short-term memory}
-	\acro{CNN}{Convolutional Neural Network}
-	\acro{RNN}{Recurrent Neural Network}
+	\acro{IOP}{intraocular pressure}
+	\acro{OCT}{optical coherence tomography}
+	\acro{VF}{visual field}
+	\acro{LSTM}{long short-term memory}
+	\acro{CNN}{convolutional neural network}
+	\acro{RNN}{recurrent neural network}
+	\acro{MD}{Mean Deviation}
+	\acro{PSD}{Pattern Standard Deviation}
+	\acro{VFI}{Visual Field Index}
+	\acro{GHT}{Glaucoma Hemifield Test}
+	\acro{DLS}{differential light sensitivity}
+	\acro{OLSLR}{ordinary least-squares linear regression}
 \end{acronym}
 
 %% End of the preliminary sections: reset page style and numbering.
@@ -205,6 +216,10 @@ Abstract
 
 %% *** Include chapter files here. ***
 \include{chapter1}
+
+\include{chapter_interim_progress}
+
+\include{chapter_interim_future}
 
 %% This adds a line for the Bibliography in the Table of Contents.
 \addcontentsline{toc}{chapter}{Bibliography}
