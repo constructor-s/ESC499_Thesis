@@ -33,7 +33,7 @@ Currently, the pathophysiology of glaucoma is not well understood and there are 
 
 Historically Heijl et al. developed the two classic metrics for summarizing a \ac{VF}: \ac{MD} and \ac{PSD}. \cite{Heijl1987} First and foremost, to evaluate one's visual field, it is necessary to know the appropriate reference threshold ($N$) at each field location with an associated variance ($\sigma^2$). It is widely accepted that the human \ac{DLS} thresholds, in units of dB, can be modeled as a linear function of age. \cite{Heijl1987a} In general, the slope of loss of sensitivity is larger in mid-periphery than para-centrally, range from $0.5$ to $1$ dB/decade. The variance is also higher in mid-periphery than para-centrally. 
 
-\ac{MD} is a measure of a \ac{VF}'s general mean value as compared to the reference. Mathematically, it is the mean of the difference between the measured threshold ($x$) and the reference $N$, weighted by the variance. Points with higher variance are considered less reliable and given less weight in the \ac{MD} metric. MD values typically range from negative to slightly positive. Negative MD values indicate less than normal sensitivity in the entire \ac{VF} and the patient may be suspected of glaucoma and/or cataract.
+\ac{MD} is a measure of a \ac{VF}'s general mean value as compared to the reference. Mathematically, it is the mean of the difference between the measured threshold ($x$) and the reference $N$, weighted by the variance. Points with higher variance are considered less reliable and given less weight in the \ac{MD} metric; blind spots (i.e. ($15\degree$, $\pm3\degree$) are removed). MD values typically range from negative to slightly positive. Negative MD values indicate less than normal sensitivity in the entire \ac{VF} and the patient may be suspected of glaucoma and/or cataract.
 
 \begin{equation}
 \textrm{MD} =\frac{ 
@@ -45,9 +45,9 @@ Historically Heijl et al. developed the two classic metrics for summarizing a \a
 }
 \end{equation}
 
-While the \ac{MD} is an intuitive summary metric for a \ac{VF}, it captures the general reduction in sensitivity, which is typical of cataract, but does not capture local asymmetries (variations) in the field, which is typical in a glaucomatous field. \ac{PSD} is another metric that tries to capture this asymmetry. Mathematically, it is defined as the weighted variance of the field, as defined below. \ac{PSD} is always positive, with higher value indicating a more varying field with a higher likelihood of glaucoma. 
+While the \ac{MD} is an intuitive summary metric for a \ac{VF}, it captures the general reduction in sensitivity, which is typical of cataract, but does not capture local asymmetries (variations) in the field, which is typical in a glaucomatous field. \ac{PSD} is another metric that tries to capture this asymmetry. Mathematically, it is defined as the weighted variance of the field, as defined in \cref{eq:psd}. $n$ refers to the numbers of locations, less the two blind spots, in the test pattern used for calculation (e.g. $n=54-2$ for the 24-2 pattern). \ac{PSD} is always positive, with higher value indicating a more varying field with a higher likelihood of glaucoma.
 
-\begin{equation}
+\begin{equation} \label{eq:psd}
 \textrm{PSD}^2 =
 	\frac{1}{n}
 	\sum\limits_{i=1}^{n} 
