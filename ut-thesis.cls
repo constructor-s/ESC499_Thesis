@@ -82,8 +82,8 @@
 %%
 %% NEW ENVIRONMENTS and COMMANDS:
 %%
-%%  * \degree{...}:  (preamble only; REQUIRED)
-%%    Specify the name of the degree (e.g., "Doctor of Philosophy").
+%%  * \degreeof{...}:  (preamble only; REQUIRED)
+%%    Specify the name of the degreeof (e.g., "Doctor of Philosophy").
 %%
 %%  * \department{...}:  (preamble only; REQUIRED)
 %%    Specify the name of the graduate department.
@@ -278,8 +278,8 @@
 
 %% The following five commands set the respective field values so we can
 %% generate the title page and abstract page automatically.
-\newcommand*{\degree}[1]%
-  {\ifx\empty#1\empty\else\gdef\@degree{#1}\fi}
+\newcommand*{\degreeof}[1]%
+  {\ifx\empty#1\empty\else\gdef\@degreeof{#1}\fi}
 \newcommand*{\department}[1]%
   {\ifx\empty#1\empty\else\gdef\@department{#1}\fi}
 \newcommand*{\gradyear}[1]%
@@ -288,13 +288,21 @@
   {\ifx\empty#1\empty\else\gdef\@author{#1}\fi}
 \renewcommand*{\title}[1]%
   {\ifx\empty#1\empty\else\gdef\@title{#1}\fi}
+  
+\newcommand*{\supervisor}[1]%
+  {\ifx\empty#1\empty\else\gdef\@supervisor{#1}\fi}
+\newcommand*{\gradmonth}[1]%
+  {\ifx\empty#1\empty\else\gdef\@gradmonth{#1}\fi}
 
 %% Default values for the required fields.
-\degree{\emph{(degree)}}
+\degreeof{\emph{(degreeof)}}
 \department{\emph{(department)}}
 \gradyear{\emph{(year of graduation)}}
 \author{\emph{(author)}}
 \title{\emph{(title)}}
+
+\supervisor{\emph{(supervisor)}}
+\gradmonth{\emph{(month of graduation)}}
 
 %%%%%%    New formatting environments and commands.
 
@@ -317,15 +325,21 @@
       by \\
       \vfill
       {\@author}\\
+      Supervisor: {\@supervisor}\\
+      {\@gradmonth} {\@gradyear}\\
       \vfill
       \vfill
-      A thesis submitted in conformity with the requirements\\
-      for the degree of {\@degree}\\
-      Undergraduate Division of {\@department}\\
-      University of Toronto\\
-      \vfill
-      {\copyright} Copyright {\@gradyear} by {\@author}\\
-      \vspace{.01\textheight}
+%      A thesis submitted in conformity with the requirements\\
+%      for the degree of {\@degreeof}\\
+%      Undergraduate Division of {\@department}\\
+%      University of Toronto\\
+%      \vfill
+%      {\copyright} Copyright {\@gradyear} by {\@author}\\
+%      \vspace{.01\textheight}
+	  \vfill
+	  \vfill
+	  \vfill
+	  \vfill
       \mbox{}
    \end{center}
    \setcounter{page}{1}
@@ -340,7 +354,7 @@
    \begin{center}
       {\@title}\\[2ex]
       {\@author}\\
-      {\@degree}\\
+      {\@degreeof}\\
       Graduate Department of {\@department}\\
       University of Toronto\\
       {\@gradyear}\\
