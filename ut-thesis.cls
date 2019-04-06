@@ -312,6 +312,32 @@
 \newenvironment*{preliminary}%
   {\pagestyle{plain}\pagenumbering{roman}}%
   {\cleardoublepage\pagenumbering{arabic}}
+  
+%% Change \maketitle to follow SGS guidelines.
+\newcommand*{\makecover}%
+{\begin{titlepage}
+		\large\singlespacingnoskip
+		\begin{center}
+			\mbox{}
+			\vfill
+			\textsc{\@title}\\
+			\vfill
+			by \\
+			\vfill
+			{\@author}\\
+			Supervisor: {\@supervisor}\\
+			{\@gradmonth} {\@gradyear}\\
+			\vfill
+			\vfill
+			\vfill
+			\vfill
+			\vfill
+			\vfill
+			\mbox{}
+		\end{center}
+		\setcounter{page}{1}
+	\end{titlepage}
+	\setcounter{page}{2}}
 
 %% Change \maketitle to follow SGS guidelines.
 \renewcommand*{\maketitle}%
@@ -329,15 +355,13 @@
       {\@gradmonth} {\@gradyear}\\
       \vfill
       \vfill
-%      A thesis submitted in conformity with the requirements\\
-%      for the degree of {\@degreeof}\\
-%      Undergraduate Division of {\@department}\\
-%      University of Toronto\\
-%      \vfill
-%      {\copyright} Copyright {\@gradyear} by {\@author}\\
-%      \vspace{.01\textheight}
-	  \vfill
-	  \vfill
+      A thesis submitted in conformity with the requirements\\
+      for the degree of {\@degreeof}\\
+      Undergraduate Division of {\@department}\\
+      University of Toronto\\
+      \vfill
+      {\copyright} Copyright {\@gradyear} by {\@author}\\
+      \vspace{.01\textheight}
 	  \vfill
 	  \vfill
       \mbox{}
@@ -355,7 +379,7 @@
       {\@title}\\[2ex]
       {\@author}\\
       {\@degreeof}\\
-      Graduate Department of {\@department}\\
+      Undergraduate Division of {\@department}\\
       University of Toronto\\
       {\@gradyear}\\
    \end{center}
