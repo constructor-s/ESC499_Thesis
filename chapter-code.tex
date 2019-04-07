@@ -1,0 +1,68 @@
+\chapter{Algorithms}
+
+\begin{center}
+
+\captionof{algorithm}{CNN LSTM Forward Propogation} \label{algo:CNNLSTM}
+\begin{algorithmic}[1]
+	\Procedure{CNNLSTMForward}{input}
+	\State $out \gets 0$ \Comment{Initialize LSTM}
+	\State $cell \gets 0$
+	\State $list \gets [out]$
+	\For{$input_i$ in all inputs} \Comment{LSTM network calculation}
+		\State $(out, cell) \gets \textrm{LSTM}(input_i, out, cell)$
+		\State Append $out$ to $list$
+	\EndFor
+	\State $\overline{out} \gets \textrm{mean}(list)$ \Comment{LSTM average pooling}
+	\State $out_{LSTM} \gets \textrm{linear}(list)$ \Comment{LSTM fully connected layer}
+	
+	\\
+	
+	\State $x_{down} \gets \textrm{Conv2d}(input, \textrm{kernel}=(3,2), \textrm{padding}=(1,0))$ \Comment{Down-convolution}
+	\State $x_0 \gets \textrm{ReLU}(\textrm{BatchNormalization}(x_{down}))$
+	\State $x_1 \gets \textrm{ConvBlock}(x_0) + x_0$ \Comment{Residual Structure}
+	\State $x_2 \gets \textrm{ConvBlock}(x_1) + x_0 + x_1$
+	\State $x_3 \gets \textrm{ConvBlock}(x_2) + x_0 + x_1 + x_2$
+	\State $out_{CNN} \gets \textrm{Conv2d}(x_3, \textrm{kernel}=(3,2), \textrm{padding}=(1,1))$ \Comment{Up-convolution}
+	
+	\\
+	
+	\State \Return {$out_{LSTM} + out_{CNN}$}
+	
+%		\BState \emph{top}:
+%		\If {$i > \textit{stringlen}$} \Return false
+%		\EndIf
+%		\State $j \gets \textit{patlen}$
+%		\BState \emph{loop}:
+%		\If {$\textit{string}(i) = \textit{path}(j)$}
+%		\State $j \gets j-1$.
+%		\State $i \gets i-1$.
+%		\State \textbf{goto} \emph{loop}.
+%		\State \textbf{close};
+%		\EndIf
+%		\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
+%		\State \textbf{goto} \emph{top}.
+	\EndProcedure
+	
+	\\
+	
+	
+	\Procedure{ConvBlock}{x}
+	
+	\State $x \gets \textrm{Conv2d}(x, \textrm{kernel}=(3,3), \textrm{padding}=(1,1))$ 
+	\State $x \gets \textrm{BatchNormalization}(\textrm{ReLU}(x))$
+	\State $x \gets \textrm{Conv2d}(x, \textrm{kernel}=(3,3), \textrm{padding}=(1,1))$
+	\State $x \gets \textrm{BatchNormalization}(\textrm{ReLU}(x))$
+	\State $x \gets \textrm{Conv2d}(x, \textrm{kernel}=(3,3), \textrm{padding}=(1,1))$
+	\State $x \gets \textrm{BatchNormalization}(\textrm{ReLU}(x))$
+	
+	\State $x \gets \textrm{Dropout}(x)$
+	
+	\State \Return {$x$}
+	
+	\EndProcedure
+\end{algorithmic}
+\end{center}
+
+
+
+

@@ -77,10 +77,33 @@
 \usepackage{subcaption}
 \graphicspath{ {./figures/} }
 \usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{cleveref}
 \usepackage{gensymb}
 \usepackage{lipsum}
+\usepackage{etoolbox}
+\usepackage{booktabs}
+\usepackage{verbatim}
+\usepackage[toc,page]{appendix}
+
+\preto\chapter\acresetall
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+%\makeatletter
+%\def\BState{\State\hskip-\ALG@thistlm}
+%\makeatother
+
+\DeclareCaptionFormat{algor}{%
+	\hrulefill\par\offinterlineskip\vskip1pt%
+	\textbf{#1#2}#3\offinterlineskip\hrulefill}
+\DeclareCaptionStyle{algori}{singlelinecheck=off,format=algor,labelsep=space}
+\captionsetup[algorithm]{style=algori}
+
+%\includeonly{chapter_methods}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                                    %%
@@ -124,6 +147,10 @@
 %%%%%%%%%%%%      MAIN  DOCUMENT      %%%%%%%%%%%%
 
 \begin{document}
+	
+\newcommand{\vf}{\textrm{VF}}
+\newcommand{\md}{\textrm{MD}}
+\newcommand{\iop}{\textrm{IOP}}
 
 %% This sets the page style and numbering for preliminary sections.
 \begin{preliminary}
@@ -208,11 +235,14 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 	\acro{GHT}{Glaucoma Hemifield Test}
 	\acro{DLS}{differential light sensitivity}
 	\acro{OLSLR}{ordinary least-squares linear regression}
-	\acro{MAE}{Mean Absolute Error}
-	\acro{MSE}{Mean Squared Error}
+	\acro{MAE}{mean absolute error}
+	\acro{MSE}{mean squared error}
 	\acro{ML}{machine learning}
 	\acro{RL}{reinforcement learning}
+	\acro{MLP}{multi-layer perceptron}
 \end{acronym}
+
+\newacroindefinite{MLP}{an}{a}
 
 %% End of the preliminary sections: reset page style and numbering.
 \end{preliminary}
@@ -235,6 +265,10 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 \include{chapter_methods}
 
 %\include{chapter_interim_future}
+
+\begin{appendices}
+\include{chapter-code}
+\end{appendices}
 
 %% This adds a line for the Bibliography in the Table of Contents.
 \addcontentsline{toc}{chapter}{Bibliography}

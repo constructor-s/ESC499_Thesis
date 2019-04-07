@@ -35,7 +35,7 @@ Historically Heijl et al. developed the two classic metrics for summarizing a \a
 
 \ac{MD} is a measure of a \ac{VF}'s general mean value as compared to the reference. Mathematically, it is the mean of the difference between the measured threshold ($x$) and the reference $N$, weighted by the variance. Points with higher variance are considered less reliable and given less weight in the \ac{MD} metric; blind spots (i.e. ($15\degree$, $\pm3\degree$) are removed). MD values typically range from negative to slightly positive. Negative MD values indicate less than normal sensitivity in the entire \ac{VF} and the patient may be suspected of glaucoma and/or cataract.
 
-\begin{equation}
+\begin{equation} \label{eq:md}
 \textrm{MD} =\frac{ 
 \sum\limits_{i=1}^{n} \left\{
 \frac{1}{\sigma_{i}^2} (x_i-N_i)
