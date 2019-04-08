@@ -61,9 +61,9 @@ To investigate the progression rate in the sample, an \ac{OLSLR} regression line
 
 It is important to note that glaucoma is a very slowly progressing disease. In addition, the data is collected from patients who are undergoing standard treatment. Moreover, both eyes of a glauocma patient are tested, and a patient can often have one glaucomatous eye and another healthy eye. As a result, we see many patients who are healthy (close to $0$ MD) and not progressing (close to $0$ MD/yr).
 
-\section{Performance of Naive Progression Prediction Approaches}
+\section{Performance of Simple Extrapolators}
 
-In this section, using the Rotterdam dataset, we establish a baseline prediction performance using ``naive'' methods. 
+In this section, using the Rotterdam dataset, we establish a baseline prediction performance using ``naive'' extrapolation methods. 
 
 \subsection{Tasks}
 
@@ -74,17 +74,17 @@ Two prediction tasks evaluated:
 	
 	This is the traditional, current clinical routine task of predicting future field index value(s) from current known fields and their summaries. 
 	
-	\item Point-wise threshold prediction:
+	\item Point-wise prediction:
 	
-	In this task, instead of predicting one number that summaries future fields, the algorithm will output full future field(s) at all $n$ locations. (For 24-2, $n=52+2$ blindspots). This task is usually not attempted traditionally, but in recent years seems to be the goal of modern machine learning algorithms in this field.
+	In this task, instead of predicting one field index that summarizes each future field, the algorithm will output full future field(s) at all $n$ locations. (For 24-2, $n=52+2$ points). This task is usually not attempted traditionally, but in recent years is a common goal of modern machine learning algorithms in this field.
 	
 \end{itemize}
 
 Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \ldots \acl{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection. 
 
-To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. 
+To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. Details on the generation of testing dataset is described in \cref{sec:datasetgeneration}.
 
-\begin{figure}[t]
+\begin{figure}[p]
 	\centering
 	\begin{subfigure}[b]{0.49\textwidth}
 		\centering
@@ -116,38 +116,48 @@ To fully utilize the the data available, all combinations (``prediction series''
 
 \subsection{Methods} \label{naivemethods}
 
-The methods evaluated are:
+Inspired by the current widely accepted methods and work by Chen et al. \cite{Chen2014}, the following extrapolation methods are assessed on the dataset:
 
 \begin{itemize}
-	\item \acf{OLSLR}: 
+	\item Linear extrapolation, i.e. \acf{OLSLR}: 
 	
 	Based on known \ac{MD} and threshold values, predict future corresponding values by linearly fitting and extrapolating on a line that minimizes the sum of squared errors. 
 	
 	\begin{equation}
-		\hat{y}(x)=(X^TX)^{-1}X^TY
+		\hat{y}(x)=\mathbf{w}\cdot[1, x]
 	\end{equation}
 	
-	where $X\in\mathbb{R}^{m\times 2}$ is the vector of time of $m$ known measurements padded with a column of ones for the bias term. $Y\in\mathbb{R}^{m\times n}$ is a matrix of dependent values consisting of rows of measurements (e.g. \ac{MD} or $n=54$ 24-2 thresholds).
+	The closed form solution implemented is: 
 	
-	\item Mean predictor:
+	\begin{equation}
+		\mathbf{w}=(X^TX)^{-1}X^Ty
+	\end{equation}
+	
+	where $X\in\mathbb{R}^{m\times 2}$ is the vector of time of $m$ known measurements padded with a column of ones for the bias term. $y\in\mathbb{R}^{m\times n}$ is a matrix of dependent values consisting of rows of measurements (e.g. $n=1$ for \ac{MD} or $n=54$ for 24-2 field thresholds).
+	
+	\item Repeating mean value:
 	
 	Predict with a constant value that is the mean of known measurements.
 	
 	\begin{equation}
-		\hat{y}(x)=\textrm{mean}(X)
+		\hat{y}(x)=\textrm{mean}(y)
 	\end{equation}
 	
-	\item Median predictor:
+	\item Repeating median value:
 	
 	Predict with a constant value that is the median of known measurements.
 	
 	\begin{equation}
-	\hat{y}(x)=\textrm{median}(X)
+	\hat{y}(x)=\textrm{median}(y)
 	\end{equation}
 	
-	\item Nearest neighbor extrapolator:
+	\item Repeating last value, i.e. nearest neighbor extrapolator:
 	
 	Extrapolate with the closest value. In the predict task, it means simply taking the last observed value.
+	
+	\begin{equation}
+		\hat{y}(x)=y_m
+	\end{equation}
 	
 \end{itemize}
 

@@ -50,7 +50,7 @@ v^{(i)} & v^{(i+1)} & v^{(i+1)}
 \in \mathbb{R}^{171}
 \end{equation}
 
-\subsection{Learning Dataset Generation}
+\subsection{Learning Dataset Generation} \label{sec:datasetgeneration}
 
 The entire dataset can be put into matrix form, where the input is:
 
@@ -108,7 +108,7 @@ L(\hat{y}, y) = \textrm{MAE}_{\vf} \triangleq
 The \ac{MAE} error for \ac{MD} is defined as:
 
 \begin{equation} \label{eq:mae-md}
-%\textrm{MAE}_{\md} \triangleq
+\textrm{MAE}_{\md} \triangleq
 \frac{1}{N} \sum_{n=1}^N \left|  \widehat{\md}^{(n)} - {\md}^{(n)}  \right|
 \end{equation}
 
@@ -133,7 +133,7 @@ w_j=\frac{ \frac{1}{\sigma_{j}^2} }{
 }
 \end{equation}
 
-. This expression is only dependent upon the weights used in calculating \ac{MD}, since the age-adjusted baseline cancels out. The weights are available from Heijl et al. \cite{Heijl1987} or Marin-Franch et al. \cite{Marin-Franch2013}
+. This expression is only dependent upon the weights used in calculating \ac{MD}, since the age-adjusted baseline cancels out. Sample weights are available from Heijl et al. \cite{Heijl1987} or Marin-Franch et al. \cite{Marin-Franch2013}
 
 \subsection{Evaluation Procedure}
 
