@@ -219,18 +219,6 @@ The final proposed framework involves adding the \ac{LSTM} network to the \ac{CN
 
 The \ac{LSTM} network also has the benefit of only needing one network to predict multiple outputs in the future due to its recurrent nature. Because of this, the training dataset used to train this network is slightly different from networks above. When training this network, it is necessary to generate a sequence of all fields $i=0, 1, 2, (2+1), (2+2), \dots, (2+K)$ where $K$ is the maximum number of fields in the future that is desired to be predicted. At test time, the model takes fields $i=0, 1, 2$ as input, and outputs all field predictions at $i=(2+1), (2+2), \dots, (2+K)$. $K=5$ and $K=10$ are tested, where $K=5$ is expected to include more training examples. 
 
-The detailed procedure of this network is shown as \cref{algo:CNNLSTM}. The network is implemented using the PyTorch framework. \cite{paszke2017automatic} 
-
-
-
-
-
-
-
-
-
-
-
-
+The detailed procedure of this network is shown as \cref{algo:CNNLSTM} in \cref{chapter:code}. The network is implemented using the PyTorch framework. \cite{paszke2017automatic} 
 
 

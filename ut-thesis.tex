@@ -90,6 +90,11 @@
 
 \preto\chapter\acresetall
 
+\usepackage{xpatch}
+\xapptocmd\appendices{%
+	\crefalias{chapter}{appendix}%
+}{}{\PatchFailed}
+
 \usepackage{algorithm}
 \usepackage{algorithmicx}
 \usepackage{algpseudocode}
@@ -243,6 +248,7 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 \end{acronym}
 
 \newacroindefinite{MLP}{an}{a}
+\newacroindefinite{HFA}{an}{a}
 
 %% End of the preliminary sections: reset page style and numbering.
 \end{preliminary}
@@ -264,11 +270,11 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 
 \include{chapter_methods}
 
-%\include{chapter_interim_future}
+\include{chapter-results}
 
-\begin{appendices}
-\include{chapter-code}
-\end{appendices}
+\include{chapter-conclusion}
+
+%\include{chapter_interim_future}
 
 %% This adds a line for the Bibliography in the Table of Contents.
 \addcontentsline{toc}{chapter}{Bibliography}
@@ -284,5 +290,9 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 %% and use \begin{thebibliography}...\end{thebibliography}.  (In that
 %% case, you should probably put the bibliography in a separate file and
 %% `\include' or `\input' it here).
+
+\begin{appendices}
+	\include{chapter-code}
+\end{appendices}
 
 \end{document}

@@ -1,8 +1,8 @@
-\chapter{Progress to Date}
+\chapter{Dataset and Baseline Measures}
 
-\section{Rotterdam Longitudinal Glaucomatous \ac{VF} Dataset}
+\section{Rotterdam Longitudinal Glaucomatous Visual Field Dataset}
 
-The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data Repository \cite{Bryan2013} consists of data from $139$ patients' ($80$ male versus $59$ female) $278$ eyes. A total of $4863$ 24-2 \ac{VF} test results with thresholds and \acp{MD} are available. On average each eye has $17.5$ fields available with mean total follow-up duration of $9.2$ years. $270$ $(97.1\%)$ eyes have at least $14$ fields with a minimum of $7.6$ years of follow-up. The mean and median follow-up interval between tests is $203$ and $189$ days; the standard deviation of follow-up time is $72.3$ days. $346$ $(7.5\%)$ of follow-ups had an interval of more than $270$ days. 
+The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data Repository \cite{Bryan2013} consists of data from $139$ patients' ($80$ male versus $59$ female) $278$ eyes. A total of $4863$ 24-2 \acl{VF} test results with thresholds and \acp{MD} are available. On average each eye has $17.5$ fields available with mean total follow-up duration of $9.2$ years. $270$ $(97.1\%)$ eyes have at least $14$ fields with a minimum of $7.6$ years of follow-up. The mean and median follow-up interval between tests is $203$ and $189$ days; the standard deviation of follow-up time is $72.3$ days. $346$ $(7.5\%)$ of follow-ups had an interval of more than $270$ days. 
 
 %\begin{figure}[t]
 %	\centering
@@ -49,7 +49,7 @@ The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data R
 		\caption{Progression rate $\Delta$MD/yr}
 		\label{fig:mdpy_hist}
 	\end{subfigure}
-	\caption{Overview of the Rotterdam Longitudinal Glaucomatous \ac{VF} Dataset. (a-d) Select examples of the longitudinal \ac{VF} test results. (e) Distribution of mean MD value over each eye's follow-up duration. A lower mean MD value represents a more depressed eye and likely indicates more severe disease. Not that since perimeters typically have a dynamic range of $0$--$34$ dB, an MD of $-30$ essentially indicates a blind/almost blind eye. (f) Distribution of progression rate of each eye over the follow-up duration as measured by the rate of change of MD. (e-f) shows that a large number of eyes are relatively healthy and most eyes did not progress. This is likely due to either the slowly progressing nature of the glaucoma disease or due to appropriate intervention by clinicians.}
+	\caption[Overview of the Rotterdam Longitudinal Glaucomatous \acl{VF} Dataset]{Overview of the Rotterdam Longitudinal Glaucomatous \acl{VF} Dataset. (a-d) Select examples of the longitudinal \acl{VF} test results. (e) Distribution of mean MD value over each eye's follow-up duration. A lower mean MD value represents a more depressed eye and likely indicates more severe disease. Not that since perimeters typically have a dynamic range of $0$--$34$ dB, an MD of $-30$ essentially indicates a blind/almost blind eye. (f) Distribution of progression rate of each eye over the follow-up duration as measured by the rate of change of MD. (e-f) shows that a large number of eyes are relatively healthy and most eyes did not progress. This is likely due to either the slowly progressing nature of the glaucoma disease or due to appropriate intervention by clinicians.}
 	% 	\label{fig:study_site}
 \end{figure}
 
@@ -80,7 +80,7 @@ Two prediction tasks evaluated:
 	
 \end{itemize}
 
-Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \ldots \ac{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection. 
+Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \ldots \acl{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection. 
 
 To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. 
 
@@ -221,7 +221,7 @@ The reported error and standard deviation (STD) is the mean and standard deviati
 %\end{table}
 \end{minipage}
 
-\subsection{Results for Point-Wise \ac{VF} Prediction Task}
+\subsection{Results for Point-Wise \acl{VF} Prediction Task}
 
 In this task, the \ac{MAE} for each predicted field is calculated as:
 
