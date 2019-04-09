@@ -49,7 +49,7 @@ The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data R
 		\caption{Progression rate $\Delta$MD/yr}
 		\label{fig:mdpy_hist}
 	\end{subfigure}
-	\caption[Overview of the Rotterdam Longitudinal Glaucomatous \acl{VF} Dataset]{Overview of the Rotterdam Longitudinal Glaucomatous \acl{VF} Dataset. (a-d) Select examples of the longitudinal \acl{VF} test results. (e) Distribution of mean MD value over each eye's follow-up duration. A lower mean MD value represents a more depressed eye and likely indicates more severe disease. Not that since perimeters typically have a dynamic range of $0$--$34$ dB, an MD of $-30$ essentially indicates a blind/almost blind eye. (f) Distribution of progression rate of each eye over the follow-up duration as measured by the rate of change of MD. (e-f) shows that a large number of eyes are relatively healthy and most eyes did not progress. This is likely due to either the slowly progressing nature of the glaucoma disease or due to appropriate intervention by clinicians.}
+	\caption[Overview of the Rotterdam Longitudinal Glaucomatous Visual Field Dataset]{Overview of the Rotterdam Longitudinal Glaucomatous Visual Field Dataset. (a-d) Select examples of the longitudinal \acl{VF} test results. (e) Distribution of mean MD value over each eye's follow-up duration. A lower mean MD value represents a more depressed eye and likely indicates more severe disease. Not that since perimeters typically have a dynamic range of $0$--$34$ dB, an MD of $-30$ essentially indicates a blind/almost blind eye. (f) Distribution of progression rate of each eye over the follow-up duration as measured by the rate of change of MD. (e-f) shows that a large number of eyes are relatively healthy and most eyes did not progress. This is likely due to either the slowly progressing nature of the glaucoma disease or due to appropriate intervention by clinicians.}
 	% 	\label{fig:study_site}
 \end{figure}
 
@@ -89,34 +89,40 @@ To fully utilize the the data available, all combinations (``prediction series''
 	\begin{subfigure}[b]{0.49\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{naive/VFLinearRegressionModel}
-		\caption{Linear regression}
+		\caption{Linear fit extrapolation}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{naive/VFExpRegressionModel}
+		\caption{Exponential fit extrapolation}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.49\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{naive/VFMeanModel}
-		\caption{Mean predictor}
+		\caption{Repeat mean value}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.49\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{naive/VFMedianModel}
-		\caption{Median predictor}
+		\caption{Repeat median value}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}[b]{0.49\textwidth}
 		\centering
 		\includegraphics[width=\textwidth]{naive/VFInterpolateModel}
-		\caption{Constant extrapolator}
+		\caption{Repeat last value}
 	\end{subfigure}
-	\caption{Illustration of the four ``naive'' methods described in \cref{naivemethods}.}
+	\caption[Illustration of the five fitting methods]{Illustration of the five fitting methods described in \cref{naivemethods}. Shown is an example of the \ac{MD} prediction problem with 6 inputs.}
 	% 	\label{fig:study_site}
 \end{figure}. 
 
 
 \subsection{Methods} \label{naivemethods}
 
-Inspired by the current widely accepted methods and work by Chen et al. \cite{Chen2014}, the following extrapolation methods are assessed on the dataset:
+Inspired by the current widely accepted methods and work by Chen et al. \cite{Chen2014}, the following extrapolation methods are assessed on the dataset:\footnote{These methods are intentionally called extrapolators to avoid confusion with the learning-based regression models introduced later.}
 
 \begin{itemize}
 	\item Linear extrapolation, i.e. \acf{OLSLR}: 
@@ -124,16 +130,26 @@ Inspired by the current widely accepted methods and work by Chen et al. \cite{Ch
 	Based on known \ac{MD} and threshold values, predict future corresponding values by linearly fitting and extrapolating on a line that minimizes the sum of squared errors. 
 	
 	\begin{equation}
-		\hat{y}(x)=\mathbf{w}\cdot[1, x]
+		\hat{y}(x)=b + mx=\mathbf{w}\cdot[1, x]
 	\end{equation}
 	
-	The closed form solution implemented is: 
+	where $\mathbf{w}=[b, m]\in \mathbb{R}^2$ are the linear fitting parameters. The closed form solution implemented is: 
 	
-	\begin{equation}
+	\begin{equation} \label{eq:linextrap}
 		\mathbf{w}=(X^TX)^{-1}X^Ty
 	\end{equation}
 	
 	where $X\in\mathbb{R}^{m\times 2}$ is the vector of time of $m$ known measurements padded with a column of ones for the bias term. $y\in\mathbb{R}^{m\times n}$ is a matrix of dependent values consisting of rows of measurements (e.g. $n=1$ for \ac{MD} or $n=54$ for 24-2 field thresholds).
+	
+	\item Exponential extrapolation: 
+	
+	The exponential model is an alternative to the traditional linear model that has been proposed in literature \cite{Chen2014,Pathak2013}, where 
+	
+	\begin{equation}
+		\ln \hat{y}(x)=\mathbf{w}\cdot[1, x]
+	\end{equation}
+	
+	Since to take the logarithm of $y$, one needs to ensure $y>0$, so the following modifications are made: (1) when used for \ac{MD} prediction, $y=-MD$; (2) when not all values of $y$ are positive (e.g. some tests yield \ac{MD}$>0$), an appropriate bias is added to make all $y$ positive. The equation above can also be fitting using \cref{eq:linextrap}.
 	
 	\item Repeating mean value:
 	
@@ -161,153 +177,238 @@ Inspired by the current widely accepted methods and work by Chen et al. \cite{Ch
 	
 \end{itemize}
 
-\subsection{Results for MD Prediction Task}
+Lastly, the following assumptions are added to limit the range of predictions:
 
-The \ac{MD} prediction \ac{MAE} for prediction series $i$ is calculated as:
+\begin{enumerate}
+	\item The minimum MD value is restricted to $-30$;
+	\item The \ac{DLS} threshold value is restricted to between $-1$ and $40$ dB;
+	\item Visual field sensitivity does not improve, i.e. the prediction value is always less sensitive than the last data point available.
+\end{enumerate}
 
-\begin{equation}
-\textrm{MAE}({\textrm{MD}_i}) = \left|\widehat{\textrm{MD}_i}-\textrm{MD}_i \right|
-\end{equation}
+%\subsection{Results for MD Prediction Task}
 
-The reported error and standard deviation (STD) is the mean and standard deviation across all $N$ prediction series.
-
-\begin{minipage}{\textwidth}
-%\begin{table}[h]
-	\captionof{table}{MD prediction performance with 3 input fields}
-	\label{tab:md3}
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{rr|llll}
-			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
-			\hline
-			next 1st        & $3751$ & $1.202\pm1.317$ & $0.991\pm1.110$ & $1.010\pm1.153$ & $1.126\pm1.192$ \\
-			next 2nd        & $3751$ & $1.482\pm1.695$ & $1.085\pm1.246$ & $1.094\pm1.282$ & $1.177\pm1.310$ \\
-			next 3rd        & $3474$ & $1.788\pm2.096$ & $1.201\pm1.403$ & $1.219\pm1.450$ & $1.275\pm1.402$ \\
-			next 4th        & $3197$ & $2.069\pm2.483$ & $1.298\pm1.567$ & $1.319\pm1.618$ & $1.352\pm1.540$ \\
-			next 5th        & $2920$ & $2.374\pm2.860$ & $1.414\pm1.725$ & $1.435\pm1.754$ & $1.482\pm1.724$ \\
-			next 6th        & $2643$ & $2.651\pm3.281$ & $1.502\pm1.843$ & $1.522\pm1.872$ & $1.551\pm1.835$ \\
-			next 7th        & $2366$ & $2.899\pm3.584$ & $1.616\pm1.964$ & $1.635\pm1.996$ & $1.663\pm1.927$ \\
-			next 8th        & $2090$ & $3.136\pm3.848$ & $1.697\pm2.051$ & $1.721\pm2.075$ & $1.750\pm2.009$ \\
-			next 9th        & $1817$ & $3.406\pm4.127$ & $1.773\pm2.144$ & $1.801\pm2.165$ & $1.843\pm2.083$ \\
-			next 10th       & $1546$ & $3.685\pm4.340$ & $1.860\pm2.234$ & $1.878\pm2.254$ & $1.887\pm2.163$ \\
-			next 11th       & $1276$ & $3.909\pm4.677$ & $1.961\pm2.292$ & $1.986\pm2.312$ & $2.002\pm2.250$ \\
-			next 12th       & $1006$ & $4.088\pm4.861$ & $2.062\pm2.275$ & $2.085\pm2.308$ & $2.070\pm2.254$ \\
-			next 13th       & $742$  & $4.329\pm5.212$ & $2.153\pm2.302$ & $2.154\pm2.337$ & $2.205\pm2.316$ \\
-			next 14th       & $514$  & $4.861\pm5.613$ & $2.231\pm2.364$ & $2.231\pm2.391$ & $2.287\pm2.391$ \\
-			next 15th       & $322$  & $5.357\pm5.978$ & $2.308\pm2.519$ & $2.295\pm2.535$ & $2.315\pm2.501$ \\
-			next 16th       & $181$  & $5.639\pm6.306$ & $2.389\pm2.754$ & $2.367\pm2.783$ & $2.484\pm2.702$ \\
-			next 17th       & $76$   & $5.916\pm6.828$ & $2.378\pm2.927$ & $2.285\pm2.969$ & $2.428\pm2.910$ \\
-			next 18th       & $19$   & $5.699\pm5.530$ & $2.128\pm2.889$ & $2.005\pm2.801$ & $2.229\pm3.175$
-		\end{tabular}%
-	}
-%\end{table}
-\end{minipage}
-
-
-\begin{minipage}{\textwidth}
-%\begin{table}[h]
-	\captionof{table}{MD prediction performance with 6 input fields}
-	\label{tab:md6}
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{rr|llll}
-			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
-			\hline
-			next 1st        & $2920$ & $1.064\pm1.177$ & $1.070\pm1.289$ & $1.088\pm1.343$ & $1.144\pm1.249$ \\
-			next 2nd        & $2920$ & $1.213\pm1.342$ & $1.192\pm1.463$ & $1.208\pm1.525$ & $1.211\pm1.381$ \\
-			next 3rd        & $2643$ & $1.352\pm1.504$ & $1.293\pm1.608$ & $1.310\pm1.675$ & $1.283\pm1.459$ \\
-			next 4th        & $2366$ & $1.500\pm1.686$ & $1.402\pm1.765$ & $1.418\pm1.810$ & $1.365\pm1.600$ \\
-			next 5th        & $2090$ & $1.657\pm1.891$ & $1.502\pm1.863$ & $1.524\pm1.889$ & $1.497\pm1.761$ \\
-			next 6th        & $1817$ & $1.792\pm2.002$ & $1.595\pm1.946$ & $1.618\pm1.970$ & $1.573\pm1.850$ \\
-			next 7th        & $1546$ & $1.921\pm2.120$ & $1.696\pm2.034$ & $1.714\pm2.068$ & $1.678\pm1.881$ \\
-			next 8th        & $1276$ & $2.076\pm2.246$ & $1.793\pm2.100$ & $1.802\pm2.130$ & $1.768\pm1.940$ \\
-			next 9th        & $1006$ & $2.218\pm2.364$ & $1.890\pm2.108$ & $1.890\pm2.124$ & $1.867\pm1.977$ \\
-			next 10th       & $742$ & $2.367\pm2.613$ & $1.994\pm2.164$ & $1.988\pm2.196$ & $1.949\pm2.055$ \\
-			next 11th       & $514$ & $2.533\pm2.845$ & $2.082\pm2.232$ & $2.066\pm2.258$ & $2.035\pm2.189$ \\
-			next 12th       & $322$ & $2.745\pm3.159$ & $2.204\pm2.391$ & $2.177\pm2.382$ & $2.154\pm2.311$ \\
-			next 13th       & $181$  & $3.048\pm3.719$ & $2.290\pm2.625$ & $2.252\pm2.580$ & $2.356\pm2.640$ \\
-			next 14th       & $76$  & $3.312\pm4.085$ & $2.276\pm2.742$ & $2.225\pm2.684$ & $2.377\pm2.812$ \\
-			next 15th       & $19$  & $3.445\pm3.240$ & $1.975\pm2.591$ & $1.960\pm2.482$ & $2.301\pm2.494$
-		\end{tabular}%
-	}
-%\end{table}
-\end{minipage}
-
-\subsection{Results for Point-Wise \acl{VF} Prediction Task}
-
-In this task, the \ac{MAE} for each predicted field is calculated as:
+The average \ac{MD} prediction \ac{MAE} for prediction data series $n$ is calculated as: (\cref{fig:extrapresultmd3,fig:extrapresultmd6})
 
 \begin{equation}
-\textrm{MAE}(x_i)=\textrm{mean}(\left\{\left| \hat{x_{i,j}} - x_{i,j} \right|\ \textrm{for}\ j = 1,\ldots,n\right\})
+\textrm{MAE}_{\textrm{MD}} = \frac{1}{N}\left|\widehat{\textrm{MD}}^{(n)}-\textrm{MD}^{(n)} \right|
 \end{equation}
 
-where $x_i\in\mathbb{R}^{n}$ is a vector representing a visual field test result for eye $i$, and $n$ is the number of points in the test pattern. For 24-2 pattern, $n=54$.
+The average whole field point-wise prediction \ac{MAE} for prediction data series $n$ is calculated as: (\cref{fig:extrapresultvf3,fig:extrapresultvf6})
 
-Similar to above, the reported mean and standard deviation is aggregated from all eyes $i\in \left[ 1,N \right]$.
+\begin{equation}
+\textrm{MAE}_{\textrm{VF}} = \frac{1}{54N}\sum_{i=1}^{54}\left|\widehat{\textrm{VF}}_i^{(n)}-\textrm{VF}_i^{(n)} \right|
+\end{equation}
 
-\begin{minipage}{\textwidth}
-	%\begin{table}[h]
-	\captionof{table}{Point-wise (whole-field) prediction performance with 3 input fields}
-	\label{tab:pw3}
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{rr|llll}
-			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
-			\hline
-			next 1st        & $3751$ & $3.138\pm1.384$ & $2.597\pm1.214$ & $2.598\pm1.252$ & $3.006\pm1.360$ \\
-			next 2nd        & $3751$ & $3.597\pm1.593$ & $2.676\pm1.298$ & $2.682\pm1.340$ & $3.069\pm1.436$ \\
-			next 3rd        & $3474$ & $4.042\pm1.797$ & $2.770\pm1.398$ & $2.776\pm1.448$ & $3.135\pm1.476$ \\
-			next 4th        & $3197$ & $4.458\pm1.990$ & $2.868\pm1.511$ & $2.875\pm1.565$ & $3.214\pm1.567$ \\
-			next 5th        & $2920$ & $4.863\pm2.203$ & $2.973\pm1.624$ & $2.982\pm1.668$ & $3.324\pm1.701$ \\
-			next 6th        & $2643$ & $5.231\pm2.379$ & $3.058\pm1.704$ & $3.069\pm1.745$ & $3.398\pm1.764$ \\
-			next 7th        & $2366$ & $5.581\pm2.500$ & $3.161\pm1.795$ & $3.173\pm1.838$ & $3.494\pm1.827$ \\
-			next 8th        & $2090$ & $5.876\pm2.563$ & $3.240\pm1.864$ & $3.258\pm1.912$ & $3.578\pm1.885$ \\
-			next 9th        & $1817$ & $6.172\pm2.589$ & $3.329\pm1.945$ & $3.349\pm1.985$ & $3.651\pm1.943$ \\
-			next 10th       & $1546$ & $6.447\pm2.695$ & $3.415\pm2.035$ & $3.444\pm2.074$ & $3.722\pm2.011$ \\
-			next 11th       & $1276$ & $6.677\pm2.810$ & $3.506\pm2.108$ & $3.533\pm2.154$ & $3.830\pm2.102$ \\
-			next 12th       & $1006$ & $6.874\pm2.850$ & $3.593\pm2.134$ & $3.623\pm2.181$ & $3.908\pm2.120$ \\
-			next 13th       & $742$  & $7.007\pm2.957$ & $3.694\pm2.212$ & $3.729\pm2.267$ & $4.029\pm2.271$ \\
-			next 14th       & $514$  & $7.257\pm3.138$ & $3.743\pm2.277$ & $3.779\pm2.312$ & $4.071\pm2.289$ \\
-			next 15th       & $322$  & $7.498\pm3.299$ & $3.902\pm2.483$ & $3.930\pm2.538$ & $4.161\pm2.468$ \\
-			next 16th       & $181$  & $7.517\pm3.541$ & $3.972\pm2.541$ & $3.959\pm2.603$ & $4.250\pm2.532$ \\
-			next 17th       & $76$   & $7.671\pm3.345$ & $4.208\pm2.913$ & $4.164\pm2.958$ & $4.345\pm2.801$ \\
-			next 18th       & $19$   & $7.360\pm3.220$ & $3.656\pm2.187$ & $3.676\pm2.307$ & $3.917\pm2.361$
-		\end{tabular}%
-	}
-	%\end{table}
-\end{minipage}
+\begin{figure}[p]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{main_extrapolate_3.pdf}
+		\caption{}
+		\label{fig:extrapresultmd3}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{main_extrapolate_6.pdf}
+		\caption{}
+		\label{fig:extrapresultmd6}
+	\end{subfigure}
+
+	\hfill
+	
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{main_extrapolate_vf_3.pdf}
+		\caption{}
+		\label{fig:extrapresultvf3}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{main_extrapolate_vf_6.pdf}
+		\caption{}
+		\label{fig:extrapresultvf6}
+	\end{subfigure}
+
+	\caption[Accuracy of extrapolation methods over different prediction lengths on the Rotterdam dataset]{Accuracy of extrapolation methods over different prediction lengths (a,b) MD extrapolation result (c,d) Whole field point-wise extrapolation result (a,c) Extrapolation from 3 fields (b,d) Extrapolation from 6 fields. As expected, the longer the prediction length on the x-axis, the less the predictive power of any method. The MD prediction results are as expected better in dBs than point-wise prediction. Having 6 input fields yield better result for linear and exponential models as it yields a more stable result, while increasing the number of fields has little effect on the mean/median/repeat extrapolator. This illustrates the limitation of the dataset where many subjects are not progressing. }
+	\label{fig:extrapresult}
+
+\end{figure}
 
 
-\begin{minipage}{\textwidth}
-	%\begin{table}[h]
-	\captionof{table}{Point-wise (whole-field) prediction performance with 6 input fields}
-	\label{tab:pw6}
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{rr|llll}
-			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
-			\hline
-			next 1st        & $2920$ & $2.737\pm1.235$ & $2.566\pm1.298$ & $2.533\pm1.350$ & $3.023\pm1.388$ \\
-			next 2nd        & $2920$ & $2.940\pm1.347$ & $2.676\pm1.426$ & $2.650\pm1.490$ & $3.105\pm1.484$ \\
-			next 3rd        & $2643$ & $3.127\pm1.431$ & $2.769\pm1.527$ & $2.746\pm1.594$ & $3.150\pm1.511$ \\
-			next 4th        & $2366$ & $3.334\pm1.544$ & $2.876\pm1.646$ & $2.855\pm1.704$ & $3.245\pm1.616$ \\
-			next 5th        & $2090$ & $3.541\pm1.694$ & $2.965\pm1.724$ & $2.948\pm1.775$ & $3.359\pm1.741$ \\
-			next 6th        & $1817$ & $3.740\pm1.766$ & $3.058\pm1.795$ & $3.046\pm1.846$ & $3.434\pm1.801$ \\
-			next 7th        & $1546$ & $3.906\pm1.812$ & $3.151\pm1.883$ & $3.147\pm1.935$ & $3.519\pm1.830$ \\
-			next 8th        & $1276$ & $4.076\pm1.854$ & $3.241\pm1.952$ & $3.236\pm2.010$ & $3.615\pm1.876$ \\
-			next 9th        & $1006$ & $4.240\pm1.912$ & $3.339\pm2.002$ & $3.334\pm2.055$ & $3.689\pm1.924$ \\
-			next 10th       & $742$  & $4.400\pm2.017$ & $3.450\pm2.113$ & $3.454\pm2.173$ & $3.791\pm2.026$ \\
-			next 11th       & $514$  & $4.552\pm2.110$ & $3.509\pm2.164$ & $3.515\pm2.220$ & $3.888\pm2.133$ \\
-			next 12th       & $322$  & $4.735\pm2.269$ & $3.670\pm2.388$ & $3.671\pm2.442$ & $4.028\pm2.278$ \\
-			next 13th       & $181$  & $4.794\pm2.358$ & $3.731\pm2.423$ & $3.733\pm2.487$ & $4.110\pm2.371$ \\
-			next 14th       & $76$   & $4.824\pm2.463$ & $3.991\pm2.709$ & $3.958\pm2.749$ & $4.386\pm2.730$ \\
-			next 15th       & $19$   & $4.792\pm2.217$ & $3.395\pm2.027$ & $3.366\pm2.067$ & $3.720\pm2.141$
-		\end{tabular}%
-	}
-	%\end{table}
-\end{minipage}
+\begin{table}[t]
+\centering
+\caption{Extrapolation method performance for predicting the 10th field}
+\begin{tabular}{@{}llrrrrr}
+	\toprule
+	                                                  &      &   \multicolumn{5}{c}{Extrapolation Method}    \\
+	\cmidrule{3-7}                      
+	Prediction \ac{MAE} (dB)              &      & Linear & Exp. & Mean & Median & Repeat \\ \midrule
+	\multirow{5}{*}{MD (3 inputs)}         & mean &    3.6 &         6.4 &  1.8 &    1.8 &    1.8 \\
+	                                                  & std  &    4.3 &         8.4 &  2.2 &    2.3 &    2.2 \\
+	                                                  & 25\% &    0.8 &         0.9 &  0.5 &    0.5 &    0.5 \\
+	                                                  & 50\% &    1.9 &         2.3 &  1.1 &    1.1 &    1.2 \\
+	                                                  & 75\% &    4.9 &         8.5 &  2.2 &    2.1 &    2.3 \\ \midrule
+	\multirow{5}{*}{MD (6 inputs)}         & mean &    2.3 &         3.3 &  2.0 &    1.9 &    1.8 \\
+	                                                  & std  &    2.5 &         4.5 &  2.3 &    2.4 &    2.1 \\
+	                                                  & 25\% &    0.7 &         0.7 &  0.6 &    0.6 &    0.5 \\
+	                                                  & 50\% &    1.6 &         1.7 &  1.2 &    1.2 &    1.2 \\
+	                                                  & 75\% &    3.0 &         3.9 &  2.4 &    2.3 &    2.4 \\ \midrule
+	\multirow{5}{*}{Point-wise (3 inputs)} & mean &    6.6 &         9.8 &  3.3 &    3.3 &    3.6 \\
+	                                                  & std  &    7.4 &        10.9 &  4.2 &    4.4 &    4.6 \\
+	                                                  & 25\% &    1.0 &         1.0 &  0.7 &    1.0 &    1.0 \\
+	                                                  & 50\% &    4.0 &         4.0 &  2.0 &    2.0 &    2.0 \\
+	                                                  & 75\% &   10.0 &        20.0 &  4.3 &    4.0 &    5.0 \\ \midrule
+	\multirow{5}{*}{Point-wise (6 inputs)} & mean &    4.7 &         7.2 &  3.4 &    3.4 &    3.7 \\
+	                                                  & std  &    5.4 &         8.5 &  4.3 &    4.5 &    4.7 \\
+	                                                  & 25\% &    1.0 &         1.0 &  0.7 &    0.5 &    1.0 \\
+	                                                  & 50\% &    3.0 &         3.3 &  2.0 &    2.0 &    2.0 \\
+	                                                  & 75\% &    6.5 &        11.0 &  4.3 &    4.0 &    5.0 \\
+	                                                   \bottomrule
+\end{tabular}
+\end{table}
 
-\subsection{Discussion}
 
-\Cref{tab:md6} illustrates the typical clinical progression prediction method. In a typical situation where $6$ fields are used to estimate future MD value after $5$ years (i.e. approximately ``next 10th''), the expected error is $2.4$ dB. Interestingly, simply predicting using the mean ($2.0$ dB), median ($2.0$ dB), or even the extrapolation ($1.9$ dB) approach achieves lower prediction error after $10$ fields. This somewhat surprising result in fact agrees with the previous observation that much of the dataset was not progressing. This illustrates that glaucoma, in many cases and definitely in this dataset, is a very slowly progressing disease. This also potentially illustrates the limitation of the current \ac{OLSLR} approach. These values establishes a baseline against which the designed algorithm will be compared. 
+%
+%
+%The reported error and standard deviation (STD) is the mean and standard deviation across all $N$ prediction series.
+%
+%\begin{minipage}{\textwidth}
+%%\begin{table}[h]
+%	\captionof{table}{MD prediction performance with 3 input fields}
+%	\label{tab:md3}
+%	\resizebox{\textwidth}{!}{%
+%		\begin{tabular}{rr|llll}
+%			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
+%			\hline
+%			next 1st        & $3751$ & $1.202\pm1.317$ & $0.991\pm1.110$ & $1.010\pm1.153$ & $1.126\pm1.192$ \\
+%			next 2nd        & $3751$ & $1.482\pm1.695$ & $1.085\pm1.246$ & $1.094\pm1.282$ & $1.177\pm1.310$ \\
+%			next 3rd        & $3474$ & $1.788\pm2.096$ & $1.201\pm1.403$ & $1.219\pm1.450$ & $1.275\pm1.402$ \\
+%			next 4th        & $3197$ & $2.069\pm2.483$ & $1.298\pm1.567$ & $1.319\pm1.618$ & $1.352\pm1.540$ \\
+%			next 5th        & $2920$ & $2.374\pm2.860$ & $1.414\pm1.725$ & $1.435\pm1.754$ & $1.482\pm1.724$ \\
+%			next 6th        & $2643$ & $2.651\pm3.281$ & $1.502\pm1.843$ & $1.522\pm1.872$ & $1.551\pm1.835$ \\
+%			next 7th        & $2366$ & $2.899\pm3.584$ & $1.616\pm1.964$ & $1.635\pm1.996$ & $1.663\pm1.927$ \\
+%			next 8th        & $2090$ & $3.136\pm3.848$ & $1.697\pm2.051$ & $1.721\pm2.075$ & $1.750\pm2.009$ \\
+%			next 9th        & $1817$ & $3.406\pm4.127$ & $1.773\pm2.144$ & $1.801\pm2.165$ & $1.843\pm2.083$ \\
+%			next 10th       & $1546$ & $3.685\pm4.340$ & $1.860\pm2.234$ & $1.878\pm2.254$ & $1.887\pm2.163$ \\
+%			next 11th       & $1276$ & $3.909\pm4.677$ & $1.961\pm2.292$ & $1.986\pm2.312$ & $2.002\pm2.250$ \\
+%			next 12th       & $1006$ & $4.088\pm4.861$ & $2.062\pm2.275$ & $2.085\pm2.308$ & $2.070\pm2.254$ \\
+%			next 13th       & $742$  & $4.329\pm5.212$ & $2.153\pm2.302$ & $2.154\pm2.337$ & $2.205\pm2.316$ \\
+%			next 14th       & $514$  & $4.861\pm5.613$ & $2.231\pm2.364$ & $2.231\pm2.391$ & $2.287\pm2.391$ \\
+%			next 15th       & $322$  & $5.357\pm5.978$ & $2.308\pm2.519$ & $2.295\pm2.535$ & $2.315\pm2.501$ \\
+%			next 16th       & $181$  & $5.639\pm6.306$ & $2.389\pm2.754$ & $2.367\pm2.783$ & $2.484\pm2.702$ \\
+%			next 17th       & $76$   & $5.916\pm6.828$ & $2.378\pm2.927$ & $2.285\pm2.969$ & $2.428\pm2.910$ \\
+%			next 18th       & $19$   & $5.699\pm5.530$ & $2.128\pm2.889$ & $2.005\pm2.801$ & $2.229\pm3.175$
+%		\end{tabular}%
+%	}
+%%\end{table}
+%\end{minipage}
+%
+%
+%\begin{minipage}{\textwidth}
+%%\begin{table}[h]
+%	\captionof{table}{MD prediction performance with 6 input fields}
+%	\label{tab:md6}
+%	\resizebox{\textwidth}{!}{%
+%		\begin{tabular}{rr|llll}
+%			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
+%			\hline
+%			next 1st        & $2920$ & $1.064\pm1.177$ & $1.070\pm1.289$ & $1.088\pm1.343$ & $1.144\pm1.249$ \\
+%			next 2nd        & $2920$ & $1.213\pm1.342$ & $1.192\pm1.463$ & $1.208\pm1.525$ & $1.211\pm1.381$ \\
+%			next 3rd        & $2643$ & $1.352\pm1.504$ & $1.293\pm1.608$ & $1.310\pm1.675$ & $1.283\pm1.459$ \\
+%			next 4th        & $2366$ & $1.500\pm1.686$ & $1.402\pm1.765$ & $1.418\pm1.810$ & $1.365\pm1.600$ \\
+%			next 5th        & $2090$ & $1.657\pm1.891$ & $1.502\pm1.863$ & $1.524\pm1.889$ & $1.497\pm1.761$ \\
+%			next 6th        & $1817$ & $1.792\pm2.002$ & $1.595\pm1.946$ & $1.618\pm1.970$ & $1.573\pm1.850$ \\
+%			next 7th        & $1546$ & $1.921\pm2.120$ & $1.696\pm2.034$ & $1.714\pm2.068$ & $1.678\pm1.881$ \\
+%			next 8th        & $1276$ & $2.076\pm2.246$ & $1.793\pm2.100$ & $1.802\pm2.130$ & $1.768\pm1.940$ \\
+%			next 9th        & $1006$ & $2.218\pm2.364$ & $1.890\pm2.108$ & $1.890\pm2.124$ & $1.867\pm1.977$ \\
+%			next 10th       & $742$ & $2.367\pm2.613$ & $1.994\pm2.164$ & $1.988\pm2.196$ & $1.949\pm2.055$ \\
+%			next 11th       & $514$ & $2.533\pm2.845$ & $2.082\pm2.232$ & $2.066\pm2.258$ & $2.035\pm2.189$ \\
+%			next 12th       & $322$ & $2.745\pm3.159$ & $2.204\pm2.391$ & $2.177\pm2.382$ & $2.154\pm2.311$ \\
+%			next 13th       & $181$  & $3.048\pm3.719$ & $2.290\pm2.625$ & $2.252\pm2.580$ & $2.356\pm2.640$ \\
+%			next 14th       & $76$  & $3.312\pm4.085$ & $2.276\pm2.742$ & $2.225\pm2.684$ & $2.377\pm2.812$ \\
+%			next 15th       & $19$  & $3.445\pm3.240$ & $1.975\pm2.591$ & $1.960\pm2.482$ & $2.301\pm2.494$
+%		\end{tabular}%
+%	}
+%%\end{table}
+%\end{minipage}
+%
+%\subsection{Results for Point-Wise \acl{VF} Prediction Task}
+%
+%In this task, the \ac{MAE} for each predicted field is calculated as:
+%
+%\begin{equation}
+%\textrm{MAE}(x_i)=\textrm{mean}(\left\{\left| \hat{x_{i,j}} - x_{i,j} \right|\ \textrm{for}\ j = 1,\ldots,n\right\})
+%\end{equation}
+%
+%where $x_i\in\mathbb{R}^{n}$ is a vector representing a visual field test result for eye $i$, and $n$ is the number of points in the test pattern. For 24-2 pattern, $n=54$.
+%
+%Similar to above, the reported mean and standard deviation is aggregated from all eyes $i\in \left[ 1,N \right]$.
+%
+%\begin{minipage}{\textwidth}
+%	%\begin{table}[h]
+%	\captionof{table}{Point-wise (whole-field) prediction performance with 3 input fields}
+%	\label{tab:pw3}
+%	\resizebox{\textwidth}{!}{%
+%		\begin{tabular}{rr|llll}
+%			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
+%			\hline
+%			next 1st        & $3751$ & $3.138\pm1.384$ & $2.597\pm1.214$ & $2.598\pm1.252$ & $3.006\pm1.360$ \\
+%			next 2nd        & $3751$ & $3.597\pm1.593$ & $2.676\pm1.298$ & $2.682\pm1.340$ & $3.069\pm1.436$ \\
+%			next 3rd        & $3474$ & $4.042\pm1.797$ & $2.770\pm1.398$ & $2.776\pm1.448$ & $3.135\pm1.476$ \\
+%			next 4th        & $3197$ & $4.458\pm1.990$ & $2.868\pm1.511$ & $2.875\pm1.565$ & $3.214\pm1.567$ \\
+%			next 5th        & $2920$ & $4.863\pm2.203$ & $2.973\pm1.624$ & $2.982\pm1.668$ & $3.324\pm1.701$ \\
+%			next 6th        & $2643$ & $5.231\pm2.379$ & $3.058\pm1.704$ & $3.069\pm1.745$ & $3.398\pm1.764$ \\
+%			next 7th        & $2366$ & $5.581\pm2.500$ & $3.161\pm1.795$ & $3.173\pm1.838$ & $3.494\pm1.827$ \\
+%			next 8th        & $2090$ & $5.876\pm2.563$ & $3.240\pm1.864$ & $3.258\pm1.912$ & $3.578\pm1.885$ \\
+%			next 9th        & $1817$ & $6.172\pm2.589$ & $3.329\pm1.945$ & $3.349\pm1.985$ & $3.651\pm1.943$ \\
+%			next 10th       & $1546$ & $6.447\pm2.695$ & $3.415\pm2.035$ & $3.444\pm2.074$ & $3.722\pm2.011$ \\
+%			next 11th       & $1276$ & $6.677\pm2.810$ & $3.506\pm2.108$ & $3.533\pm2.154$ & $3.830\pm2.102$ \\
+%			next 12th       & $1006$ & $6.874\pm2.850$ & $3.593\pm2.134$ & $3.623\pm2.181$ & $3.908\pm2.120$ \\
+%			next 13th       & $742$  & $7.007\pm2.957$ & $3.694\pm2.212$ & $3.729\pm2.267$ & $4.029\pm2.271$ \\
+%			next 14th       & $514$  & $7.257\pm3.138$ & $3.743\pm2.277$ & $3.779\pm2.312$ & $4.071\pm2.289$ \\
+%			next 15th       & $322$  & $7.498\pm3.299$ & $3.902\pm2.483$ & $3.930\pm2.538$ & $4.161\pm2.468$ \\
+%			next 16th       & $181$  & $7.517\pm3.541$ & $3.972\pm2.541$ & $3.959\pm2.603$ & $4.250\pm2.532$ \\
+%			next 17th       & $76$   & $7.671\pm3.345$ & $4.208\pm2.913$ & $4.164\pm2.958$ & $4.345\pm2.801$ \\
+%			next 18th       & $19$   & $7.360\pm3.220$ & $3.656\pm2.187$ & $3.676\pm2.307$ & $3.917\pm2.361$
+%		\end{tabular}%
+%	}
+%	%\end{table}
+%\end{minipage}
+%
+%
+%\begin{minipage}{\textwidth}
+%	%\begin{table}[h]
+%	\captionof{table}{Point-wise (whole-field) prediction performance with 6 input fields}
+%	\label{tab:pw6}
+%	\resizebox{\textwidth}{!}{%
+%		\begin{tabular}{rr|llll}
+%			MD MAE\\$\pm$STD (dB) & N    & Linear      & Mean        & Median      & Extrapolation \\
+%			\hline
+%			next 1st        & $2920$ & $2.737\pm1.235$ & $2.566\pm1.298$ & $2.533\pm1.350$ & $3.023\pm1.388$ \\
+%			next 2nd        & $2920$ & $2.940\pm1.347$ & $2.676\pm1.426$ & $2.650\pm1.490$ & $3.105\pm1.484$ \\
+%			next 3rd        & $2643$ & $3.127\pm1.431$ & $2.769\pm1.527$ & $2.746\pm1.594$ & $3.150\pm1.511$ \\
+%			next 4th        & $2366$ & $3.334\pm1.544$ & $2.876\pm1.646$ & $2.855\pm1.704$ & $3.245\pm1.616$ \\
+%			next 5th        & $2090$ & $3.541\pm1.694$ & $2.965\pm1.724$ & $2.948\pm1.775$ & $3.359\pm1.741$ \\
+%			next 6th        & $1817$ & $3.740\pm1.766$ & $3.058\pm1.795$ & $3.046\pm1.846$ & $3.434\pm1.801$ \\
+%			next 7th        & $1546$ & $3.906\pm1.812$ & $3.151\pm1.883$ & $3.147\pm1.935$ & $3.519\pm1.830$ \\
+%			next 8th        & $1276$ & $4.076\pm1.854$ & $3.241\pm1.952$ & $3.236\pm2.010$ & $3.615\pm1.876$ \\
+%			next 9th        & $1006$ & $4.240\pm1.912$ & $3.339\pm2.002$ & $3.334\pm2.055$ & $3.689\pm1.924$ \\
+%			next 10th       & $742$  & $4.400\pm2.017$ & $3.450\pm2.113$ & $3.454\pm2.173$ & $3.791\pm2.026$ \\
+%			next 11th       & $514$  & $4.552\pm2.110$ & $3.509\pm2.164$ & $3.515\pm2.220$ & $3.888\pm2.133$ \\
+%			next 12th       & $322$  & $4.735\pm2.269$ & $3.670\pm2.388$ & $3.671\pm2.442$ & $4.028\pm2.278$ \\
+%			next 13th       & $181$  & $4.794\pm2.358$ & $3.731\pm2.423$ & $3.733\pm2.487$ & $4.110\pm2.371$ \\
+%			next 14th       & $76$   & $4.824\pm2.463$ & $3.991\pm2.709$ & $3.958\pm2.749$ & $4.386\pm2.730$ \\
+%			next 15th       & $19$   & $4.792\pm2.217$ & $3.395\pm2.027$ & $3.366\pm2.067$ & $3.720\pm2.141$
+%		\end{tabular}%
+%	}
+%	%\end{table}
+%\end{minipage}
 
-For all \cref{tab:md3,tab:md6,tab:pw3,tab:pw6}, it is observed that within each table the error increases as fields further in the future are to be predicted, as expected. Fewer input fields ($3$ versus $6$) also resulted in higher error, as expected. The point-wise prediction task is harder than the MD prediction task due to the nature of MD being a summary statistics that averages errors across the field. 
+\subsection{Results and Discussion}
+
+\Cref{fig:extrapresultmd6} illustrates the typical clinical progression prediction method. In a typical situation where $6$ fields are used to estimate future MD value after $5$ years (i.e. approximately ``next 10th''), the expected error is $2.4$ dB. Interestingly, simply predicting using the mean ($2.0$ dB), median ($2.0$ dB), or even the extrapolation ($1.9$ dB) approach achieves lower prediction error after $10$ fields. This somewhat surprising result in fact agrees with the previous observation that much of the dataset was not progressing. This illustrates that glaucoma, in many cases and definitely in this dataset, is a very slowly progressing disease. This also potentially illustrates the limitation of the current \ac{OLSLR} approach. These values establishes a baseline against which the designed algorithm will be compared. 
+
+In \cref{fig:extrapresult}, it is observed that within each table the error increases as fields further in the future are to be predicted, as expected. Fewer input fields ($3$ versus $6$) also resulted in higher error, as expected. The point-wise prediction task is harder than the MD prediction task due to the nature of MD being a summary statistics that averages errors across the field. 
 
 
 
