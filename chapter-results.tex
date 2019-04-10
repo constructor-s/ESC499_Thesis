@@ -1,8 +1,8 @@
-\chapter{Results and Discussion}
+\chapter{Results and Discussion} \label{chapter:results}
 
 \section{Model Parameters}
 
-Using the $70\%$ training set, $15\%$ validation set, and $15\%$ testing set, the hyperparameters chosen for each learning model is shown in \cref{tab:hyperparam}.
+Using the $70\%$ training set, $15\%$ validation set, and $15\%$ testing set, the hyper-parameters chosen for each learning model is shown in \cref{tab:hyperparam}.
 
 \begin{table}[h]
 	\centering
@@ -94,7 +94,7 @@ Within each method, the error increases as one extends the prediction further in
 
 \section{Discussion}
 
-\begin{table}[h]
+\begin{table}[b!]
 \centering
 \caption{Glaucoma progression rates and study dataset statistics of \acs{EMGT}, \acs{CGS}, and Rotterdam studies}
 \label{tab:glaucprogress}
@@ -122,15 +122,14 @@ Within each method, the error increases as one extends the prediction further in
 
 The distribution of glaucoma progression rates, expressed in dB/year, is known to be asymmetric with a long tail for highly negative progression rates---some but only limited patients show very rapid progression, but most are reasonably stable as mild progressors. \cite{Anderson2015} In the \ac{EMGT}, Heijl et al. found that the rate of visual field loss in their study sample is: mean $-1.08$ dB/year, median $-0.40$ dB/year, interquartile range $1.05$ dB/year. \cite{Heijl2009} Chauhan et al. reported in the \ac{CGS}: mean $-0.54$ dB/year, median $-0.35$ dB/year, interquartile range $0.64$ dB/year. \cite{Group2010} Both studies reported that elder patients are more likely to progress faster. Heijl et al. reported that exfoliation glaucoma progresses much faster than non-exfoliation glaucoma patients. 
 
-For the Rotterdam dataset used in this work, the rate of change values are: mean $-0.10$ dB/year, median $-0.04$, interquartile range $0.33$. Relevant statistics comparison is shown in \cref{tab:glaucprogress}. Overall, the progression rate is slower (less negative) than the two major studies. The patient population is younger. Furthermore, pseudo-exfoliation glaucoma was not included in the Rotterdam dataset. This causes the major limitation of current work in terms of algorithm training and testing, because most patients in the dataset are not demonstrating progression. As a result, the ``repeat'' prediction has the same effectiveness as learning methods. 
+For the Rotterdam dataset used in this work, the rate of change values are: mean $-0.10$ dB/year, median $-0.04$, interquartile range $0.33$. Relevant statistics comparison is shown in \cref{tab:glaucprogress}. Overall, the progression rate is slower (less negative) than the two major studies. The patient population is younger. Furthermore, pseudo-exfoliation glaucoma was not included in the Rotterdam dataset. This causes the major limitation of current work in terms of algorithm training and testing, because most patients in the dataset are not demonstrating progression. As a result, the ``repeat'' prediction has the same effectiveness as learning methods. On the other hand, it also shows that the learning methods successfully picked up this trend. 
 
-It is also found that the linear extrapolation methods, which is the current clinically adopted method, performed much worse than the other methods. If this suggests limitations in the linear extrapolation method for accurate prediction and slope estimation requires further investigation. The exponential model, despite its potential physiological interpretation, performs even worse than linear extrapolation. The fact that all learning methods managed to perform better suggests there is an application for such algorithms in the glaucoma prediction task. 
+It is also found that the linear extrapolation methods, which is the current clinically adopted method, performed much worse than the other methods. Whether this suggests limitations in the linear extrapolation method for accurate prediction and slope estimation requires further investigation. Previous in \cref{fig:extrapresult}, it was also demonstrated that the exponential model, despite its potential physiological interpretation, performs even worse than linear extrapolation. The fact that all learning methods managed to perform better suggests there is a potential application for such algorithms in the glaucoma prediction task. 
 
 \section{Future Work}
 
-The next step in the project is to collect a glaucoma patient dataset from our own sources. Such a dataset should include more examples of glaucoma progression by including older patients, patients with exfoliation glaucoma, and a larger patient sample size. 
+The next step in the project schedule is to collect a glaucoma patient dataset from our own sources, upon which these and other methods will be evaluated again. Such a dataset should include more examples of glaucoma progression by including older patients, patients with exfoliation and other types of glaucoma, and a larger patient sample size. 
 
-Most current study datasets also does not include any patients with history of surgical intervention. However, patients with surgical intervention are also likely ones with the most severe progression rate and require the most attention for a carefully-determined treatment decision. We propose to also collect some patients with significant interventions, along with other potentially important details such as their medication history, family history, ethnicity, specific diagnosis, angle closure, etc., all of which are known to affect the trajectory of glaucoma progression. We will also attempt to collect \ac{OCT} data from the patients who will be included in our study. The challenge then lies in designing an algorithm that can appropriately represent such a multi-variable dataset. 
+Most current study datasets also does not include any patients with history of surgical intervention. However, patients with surgical intervention are also likely ones with the most severe progression rate and require the most attention for a carefully-determined treatment decision. It may be effective to also collect some patients with significant interventions, along with other potentially important details such as their medication history, family history, ethnicity, specific diagnosis, angle closure, etc., all of which are known to affect the trajectory of glaucoma progression. One may also collect \ac{OCT} data from the patients who will be included in our study, though its usefulness is still an open question. The challenge then lies in designing an algorithm that can appropriately represent such a multi-model and multi-variate dataset. 
 
 Finally, another area of application of machine learning algorithm is glaucoma screening, specifically the classification of patients in a screening setting. The input to the algorithm will be one visual field produced from a screening setting, potentially with \ac{IOP} information which is also routinely examined, and the algorithm will label if the patient is healthy or a glaucoma suspect. The performance of such an algorithm will be primarily compared against using field indices, especially \ac{GHT} which is designed for a similar classification task. 
-

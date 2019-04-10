@@ -1,6 +1,6 @@
-\chapter{Learning Methods}
+\chapter{Learning Methods} \label{chapter:methods}
 
-This chapter provides a framing of the visual field progression prediction tasks introduced before as learning problems, and introduces the learning algorithm architectures to be evaluated against the available data set. 
+This chapter provides a framing of the visual field progression prediction tasks introduced before as learning problems, and introduces the learning algorithm architectures to be evaluated against the Rotterdam dataset. 
 
 \section{The Learning Task}
 
@@ -21,7 +21,7 @@ t^{(i)}
 \in \mathbb{R}^{57}
 \end{equation}
 
-where $t^{(n)}$ is the time of the visit, and $\textrm{VF}^{(i)}_j$ is the \ac{DLS} for the $j$-th point in the visual field. By convention of the visual field analysis tools developed by Marin-Franch et al. \cite{Marin-Franch2013}, all fields of the left (OS) eye are flipped horizontally (unmodified vertically) to match with the coordinates of the right eye, and then each visual field location is index from left to right, then top to bottom, in the same way as the reading direction in English. Each of the vector component is normalized in the range shown in \cref{tab:norm}.
+where $t^{(i)}$ is the time of the visit, and $\textrm{VF}^{(i)}_j$ is the \ac{DLS} for the $j$-th point in the visual field. By convention of the visual field analysis tools developed by Marin-Franch et al. \cite{Marin-Franch2013}, all fields of the left (OS) eye are flipped horizontally (unmodified vertically) to match with the coordinates of the right eye, and then each visual field location is indexed from left to right, then top to bottom (same as the reading direction in English). Each of the vector component is normalized to approximately $[0, 1]$ in the range shown in \cref{tab:norm}.
 
 \begin{table}[h]
 \centering
@@ -41,7 +41,7 @@ Age ($t$) & 50 & 80 & years &  \\
 \label{tab:norm}
 \end{table}
 
-For three input fields, we can concatenate the three visits and write the entire input vector as: 
+For three input visits (i.e. the input to our learning task), we can concatenate the three visits and write the entire input vector as: 
 
 \begin{equation}
 x^{(n)} = \begin{bmatrix}
@@ -52,7 +52,7 @@ v^{(i)} & v^{(i+1)} & v^{(i+1)}
 
 \subsection{Learning Dataset Generation} \label{sec:datasetgeneration}
 
-The entire dataset can be put into matrix form, where the input is:
+The entire dataset can be put into matrix form, where the input variable is:
 
 \begin{equation}
 \mathbf{X} = \begin{bmatrix}
@@ -61,10 +61,10 @@ x^{(2)} \\
 \vdots \\
 x^{(N)} \\
 \end{bmatrix}
-\in \mathbb{R}^{N\times 161}
+\in \mathbb{R}^{N\times 171}
 \end{equation}
 
-and the output field prediction is simply the \ac{DLS} at each location:
+and the prediction variable is simply the \ac{DLS} at each location:
 
 \begin{equation}
 \mathbf{Y} = \begin{bmatrix}
@@ -82,7 +82,9 @@ Y^{(N)} \\
 \in \mathbb{R}^{N\times 54}
 \end{equation}
 
-Since it is fairly standard---and also the case in the Rotterdam dataset as shown before---that glaucoma patients are followed up on an interval of 6 months, the training examples are generated such that
+Instead of training a separate regressor, the \ac{MD} values will be calculated from the predicted point-wise values. 
+
+The glaucoma patients are followed up on an interval of 6 months. Therefore, the prediction series are generated such that: 
 
 \begin{equation} \label{eq:train-criterion-1}
 \Delta t = 183~\textrm{days} \approx (t_{v^{(i+1)}} - t_{v^{(i)}}) \approx (t_{v^{(i+2)}} - t_{v^{(i+1)}})
@@ -94,25 +96,26 @@ and the output field is $K$ fields (approximately $0.5K$ years) after the last i
 t_{v^{(Y)}} - t_{v^{(i+1)}} \approx 183K~\textrm{days}
 \end{equation}
 
-Learning sets in the Rotterdam dataset that satisfy \cref{eq:train-criterion-1,,eq:train-criterion-2} for all $K\in[1, 10]$ are generated.
+Learning sets in the Rotterdam dataset that satisfy \cref{eq:train-criterion-1,,eq:train-criterion-2} for all $K\in[1, 10]$ are generated for learning.
 
 \subsection{Error Definition}
 
-The \ac{MAE} error for the whole field is defined as:
+The average point-wise \ac{MAE} error is defined as:
 
 \begin{equation}
-L(\hat{y}, y) = \textrm{MAE}_{\vf} \triangleq 
+%L(\hat{y}, y) = 
+\textrm{MAE}_{\vf} \triangleq 
 \frac{1}{54N} \sum_{n=1}^N \sum_{j=1}^{54} \left|  \widehat{\vf}_j^{(n)} - {\vf}_j^{(n)}  \right|
 \end{equation}
 
-The \ac{MAE} error for \ac{MD} is defined as:
+The average \ac{MAE} for \ac{MD} is defined as:
 
 \begin{equation} \label{eq:mae-md}
 \textrm{MAE}_{\md} \triangleq
 \frac{1}{N} \sum_{n=1}^N \left|  \widehat{\md}^{(n)} - {\md}^{(n)}  \right|
 \end{equation}
 
-The calculation of \ac{MD} was introduced as \cref{eq:md}, which requires 1) age-adjusted baseline \ac{DLS} values and 2) variance at each location of the field (i.e. weights when averaging the deviation values). Since the target \ac{MD} values in the Rotterdam database are provided presumably from \ac{HFA}'s database that are not publicly available, one can modify \cref{eq:mae-md} by substituting in \cref{eq:md}:
+The calculation of \ac{MD} was introduced as \cref{eq:md}, which requires (1) age-adjusted baseline \ac{DLS} values and (2) variance at each location of the field (i.e. weights when averaging the deviation values). These values, specifically the ones used to generate \ac{MD} values in the Rotterdam dataset, is not available. However, one can modify \cref{eq:mae-md} by substituting in \cref{eq:md}:
 
 \begin{align}
 \textrm{MAE}_{\md} &=
@@ -133,11 +136,11 @@ w_j=\frac{ \frac{1}{\sigma_{j}^2} }{
 }
 \end{equation}
 
-. This expression is only dependent upon the weights used in calculating \ac{MD}, since the age-adjusted baseline cancels out. Sample weights are available from Heijl et al. \cite{Heijl1987} or Marin-Franch et al. \cite{Marin-Franch2013}
+This expression is only dependent upon the weights used in calculating \ac{MD}, since the age-adjusted baseline cancels out. Sample weights are available from Heijl et al. \cite{Heijl1987} or Marin-Franch et al. \cite{Marin-Franch2013}
 
 \subsection{Evaluation Procedure}
 
-$70\%$ of the data is used for training, $15\%$ is used for validation and used to fine tune the hyper-parameters of the model. Then, the hyper-parameters are set and 5-fold cross validation is performed to report model performance. 
+$70\%$ of the data is used for training, $15\%$ is used for validation to fine tune the hyper-parameters of the model. Then, the hyper-parameters are set and 5-fold cross validation is performed to report model performance. 
 
 \section{Models}
 
@@ -145,15 +148,16 @@ This section describes a range of simple to complex learning models that are pro
 
 \subsection{Ridge Regression}
 
-Ridge regression is a $L_2$-regularized linear regression\footnotemark that aims to minimize the combination of the sum squared cost and the $L_2$ norm of the weight parameters. By weighting on the model parameters, one hopes to yield a simpler model that is fit less toward specific trends in the training set and generalizes better. The model prediction is: 
+Ridge regression is a $L_2$-regularized linear regression\footnotemark that aims to minimize the combination of the sum squared cost and the $L_2$ norm of the weight parameters. By weighting on the model parameters, it is expected to yield a simpler model that is fit less toward specific noisy trends in the training set and generalizes better. The model prediction is: 
 
 \footnotetext{In this document the term ``linear regression'' is intentionally avoided to avoid confusion with the simple linear extrapolation method by extrapolating each variable with a linear fit over time, which is often called the \ac{OLSLR} method.}
 
 \begin{equation}
-\hat{\mathbf{Y}} = \mathbf{X}_1\mathbf{W}
+%\hat{\mathbf{Y}} = \mathbf{X}_1\mathbf{W}
+\hat{\mathbf{y}} = [1, \mathbf{x}] \cdot \mathbf{W}
 \end{equation}
 
-where $\mathbf{X}_1\triangleq\begin{bmatrix}\mathbf{1} & \mathbf{X} \end{bmatrix}$ includes the bias feature. The objective is to minimize the regularized sums squared cost:
+The objective is to minimize the regularized sums squared cost:
 
 \begin{equation}
 \mathbf{W} \leftarrow \arg \min_{\mathbf{W}} ||\hat{\mathbf{Y}} - \mathbf{Y}||^2_2 + \lambda ||\mathbf{W}||^2_2
@@ -167,6 +171,8 @@ This has the closed form solution, which is directly implemented:
 \right)^{-1}
 \mathbf{X}_1^T \mathbf{Y}
 \end{equation}
+
+where $\mathbf{X}_1\triangleq\begin{bmatrix}\mathbf{1} & \mathbf{X} \end{bmatrix}$ includes the bias feature. 
 
 \subsection{Huber Regression}
 
@@ -186,16 +192,17 @@ One Huber regressor is needed for each output dimension, so essentially 54 regre
 
 \subsection{Multi-Layer Perceptron}
 
-The \ac{MLP} neural network model takes the 171 features as input and outputs 54 \ac{DLS} values. Considering the high dimensionality of the output, a standard three-layer (two hidden layers) network is investigated with number of neural units being the hyperparameter. $L_2$ regularization is applied to all weights. ReLU is used as the activation function at all layers except the output layer. The model is implemented in Tensorflow. \cite{tensorflow} The whole field \ac{MAE} loss is used as the objective function. The weights are optimized iteratively with the Adam Optimizer using batch size of 32.
+The \ac{MLP} (also known as fully-connected neural network) model takes the 171 features as input and outputs 54 \ac{DLS} values. Considering the high dimensionality of the output, a standard three-layer (two hidden layers) network is investigated with number of neural units being the hyperparameter. $L_2$ regularization is applied to all weights. ReLU is used as the activation function at all layers except the output layer. The model is implemented in Tensorflow. \cite{tensorflow} The average point-wise \ac{MAE} loss is used as the objective function. The weights are optimized iteratively with the Adam Optimizer using batch size of 32.
 
 \subsection{Convolutional Neural Network}
 
-\ac{CNN} is a type of neural network architecture that, thanks to the tremendous improvement in computational power recently, has shown tremendous performance in automatically learning to extract image features instead of requiring hand-crated features detection algorithms. Each visual field can be seen as an $8\times9$ image. This relatively low dimensionality, compared to the inputs to typical image recognitions tasks in which \acp{CNN} are applied, may leave limited room of improvement in the performance of \ac{CNN} over a simpler flat architecture such as \iac{MLP}. However, spatial patterns in the visual field are have been known to important to glaucoma diagnosis and progression, and \ac{CNN} is an architecture that is known to be able to extract such spatial information. 
+Convolutional Neural Network (CNN) is a type of neural network architecture that, thanks to the tremendous improvement in computational power recently, has shown tremendous performance in automatically learning to extract image features instead of requiring hand-crated features detection algorithms. Each visual field can be seen as an $8\times9$ image. This relatively low dimensionality, compared to the inputs to typical image recognitions tasks in which \acp{CNN} are applied, may leave limited room of improvement in the performance of \ac{CNN} over a simpler flat architecture such as \iac{MLP}. However, spatial patterns in the visual field are have been known to important to glaucoma diagnosis and progression (see \cref{fig:fieldpattern}), and \ac{CNN} is an architecture that is known to be able to extract such spatial information. 
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{sample2004pattern}
 	\caption[Examples of typical patterns of glaucomatous visual field loss]{Examples of typical patterns of glaucomatous visual field loss that are known to be physiologically and clinically important for diagnosis and prediction. Such evidence is the motivation behind employing a \ac{CNN} achitecture that is likely to preserve and extract useful spatial information in the visual field. (Figure from Sample et al. \cite{Sample2004})}
+	\label{fig:fieldpattern}
 \end{figure}
 
 A typical \ac{CNN} architecture is implemented. Specifically, this \ac{CNN} consists of:

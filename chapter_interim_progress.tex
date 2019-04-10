@@ -1,8 +1,6 @@
-\chapter{Dataset and Baseline Measures}
+\chapter{Rotterdam Dataset and Non-learning Methods} \label{chapter:dataset}
 
-\section{Rotterdam Longitudinal Glaucomatous Visual Field Dataset}
-
-The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data Repository \cite{Bryan2013} consists of data from $139$ patients' ($80$ male versus $59$ female) $278$ eyes. A total of $4863$ 24-2 \acl{VF} test results with thresholds and \acp{MD} are available. On average each eye has $17.5$ fields available with mean total follow-up duration of $9.2$ years. $270$ $(97.1\%)$ eyes have at least $14$ fields with a minimum of $7.6$ years of follow-up. The mean and median follow-up interval between tests is $203$ and $189$ days; the standard deviation of follow-up time is $72.3$ days. $346$ $(7.5\%)$ of follow-ups had an interval of more than $270$ days. 
+The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data Repository \cite{Bryan2013} consists of data from $139$ patients' ($80$ male versus $59$ female) $278$ eyes. A total of $4863$ 24-2 \acl{VF} test results with thresholds and \ac{MD} are available. On average each eye has $17.5$ fields available with mean total follow-up duration of $9.2$ years. $270$ $(97.1\%)$ eyes have at least $14$ fields with a minimum of $7.6$ years of follow-up. The follow-ups are originally scheduled for every $6$ months. The mean and median actual follow-up interval between tests is $203$ and $189$ days respectively; the standard deviation of follow-up time is $72.3$ days. $346$ $(7.5\%)$ of follow-ups had an interval of more than $270$ days. 
 
 %\begin{figure}[t]
 %	\centering
@@ -53,23 +51,23 @@ The Longitudinal Glaucomatous Visual Field data from Rotterdam Ophthalmic Data R
 	% 	\label{fig:study_site}
 \end{figure}
 
-\subsection{Dataset Characteristics}
+\section{Dataset Characteristics}
 
-To investigate the composition of healthy versus glaucomatous patients the dataset, the characteristic of MD values in the dataset is investigated. In figure \ref{fig:mean_md_hist} the distribution of average MD value calculated from all tests administers on an eye for each of the $278$ eyes is shown. The mean and median of the distribution are $-8.9$ and $-6.8$ dB respectively. The data set contains mostly eyes with mild to moderate reduced MD values ($75\%$ of eyes have average MD $>-13.2$ dB).
+To investigate the composition of healthy versus glaucomatous patients the dataset, the characteristic of \ac{MD} values in the dataset is investigated. In figure \ref{fig:mean_md_hist} the distribution of average \ac{MD} value calculated from all tests administers on each of the $278$ eyes is shown. The mean and median of the distribution are $-8.9$ and $-6.8$ dB respectively. The dataset contains mostly eyes with mild to moderate reduced MD values ($75\%$ of eyes have average MD $>-13.2$ dB).
 
-To investigate the progression rate in the sample, an \ac{OLSLR} regression line is fit to each eye's MD history. The distribution of the slope (db/year) is shown in figure \ref{fig:mdpy_hist}. 
+To investigate the progression rate in the sample, an \ac{OLSLR} line is fit to each eye's \ac{MD} history. The distribution of the slope (db/year) is shown in \cref{fig:mdpy_hist}. 
 
 It is important to note that glaucoma is a very slowly progressing disease. In addition, the data is collected from patients who are undergoing standard treatment. Moreover, both eyes of a glauocma patient are tested, and a patient can often have one glaucomatous eye and another healthy eye. As a result, we see many patients who are healthy (close to $0$ MD) and not progressing (close to $0$ MD/yr).
 
-The inclusion/exclusion criteria and further information about the dataset can be found in \cref{chapter:rotterdam}.
+The inclusion/exclusion criteria as well as further information about the dataset can be found in \cref{chapter:rotterdam}.
 
 \section{Performance of Simple Extrapolators}
 
-In this section, using the Rotterdam dataset, we establish a baseline prediction performance using ``naive'' extrapolation methods. 
+In this section, using the Rotterdam dataset, we establish a baseline prediction performance using simple non-learning based extrapolation methods. 
 
 \subsection{Tasks}
 
-Two prediction tasks evaluated:
+Two prediction tasks are evaluated:
 
 \begin{itemize}
 	\item \ac{MD} prediction:
@@ -82,9 +80,9 @@ Two prediction tasks evaluated:
 	
 \end{itemize}
 
-Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \ldots \acl{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection. 
+The input to the algorithms consists of time (age) at each field examination, and the respective \ac{MD} or point-wise field thresholds. Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \dots \acl{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection and used for training learning algorithms. 
 
-To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. Details on the generation of testing dataset is described in \cref{sec:datasetgeneration}.
+To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields approximately $6$ months apart are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. Details on the generation of testing dataset is described in \cref{sec:datasetgeneration}.
 
 \begin{figure}[p]
 	\centering
@@ -124,18 +122,18 @@ To fully utilize the the data available, all combinations (``prediction series''
 
 \subsection{Methods} \label{naivemethods}
 
-Inspired by the current widely accepted methods and work by Chen et al. \cite{Chen2014}, the following extrapolation methods are assessed on the dataset:\footnote{These methods are intentionally called extrapolators to avoid confusion with the learning-based regression models introduced later.}
+Inspired by the current widely accepted methods and work by Chen et al. \cite{Chen2014}, the following extrapolation methods are assessed on the dataset:\footnote{These methods are intentionally called extrapolators to avoid confusion with the learning-based regression models introduced later in \cref{chapter:methods}.}
 
 \begin{itemize}
-	\item Linear extrapolation, i.e. \acf{OLSLR}: 
+	\item Linear fit extrapolation, i.e. \acf{OLSLR}: 
 	
-	Based on known \ac{MD} and threshold values, predict future corresponding values by linearly fitting and extrapolating on a line that minimizes the sum of squared errors. 
+	Based on known \ac{MD} and threshold values, predict future corresponding values by linearly fitting and extrapolating on a line that minimizes the sum of squared errors. Mathematically, 
 	
 	\begin{equation}
-		\hat{y}(x)=b + mx=\mathbf{w}\cdot[1, x]
+		\hat{y}(x)=b + ax=\mathbf{w}\cdot[1, x]
 	\end{equation}
 	
-	where $\mathbf{w}=[b, m]\in \mathbb{R}^2$ are the linear fitting parameters. The closed form solution implemented is: 
+	where $\mathbf{w}=[b, a]\in \mathbb{R}^2$ are the linear fitting parameters. The closed form solution implemented is: 
 	
 	\begin{equation} \label{eq:linextrap}
 		\mathbf{w}=(X^TX)^{-1}X^Ty
@@ -151,7 +149,7 @@ Inspired by the current widely accepted methods and work by Chen et al. \cite{Ch
 		\ln \hat{y}(x)=\mathbf{w}\cdot[1, x]
 	\end{equation}
 	
-	Since to take the logarithm of $y$, one needs to ensure $y>0$, so the following modifications are made: (1) when used for \ac{MD} prediction, $y=-MD$; (2) when not all values of $y$ are positive (e.g. some tests yield \ac{MD}$>0$), an appropriate bias is added to make all $y$ positive. The equation above can also be fitting using \cref{eq:linextrap}.
+	Since to take the logarithm of $y$, one needs to ensure $y>0$, so the following modifications are made: (1) when used for \ac{MD} prediction, $y=-\textit{MD}$; (2) when not all values of $y$ are positive (e.g. some tests yield \ac{MD}$>0$), an appropriate bias is added to make all $y$ positive. The equation above can also be fitting using \cref{eq:linextrap}.
 	
 	\item Repeating mean value:
 	
@@ -179,11 +177,11 @@ Inspired by the current widely accepted methods and work by Chen et al. \cite{Ch
 	
 \end{itemize}
 
-Lastly, the following assumptions are added to limit the range of predictions:
+Lastly, the following physiological assumptions are added to limit the range of predictions from the linear and exponential fit methods to increase prediction stability: \footnote{These restrictions are also added because without them, the performance of extrapolators deteriorates very quickly in a few fields.}
 
 \begin{enumerate}
-	\item The minimum MD value is restricted to $-30$;
-	\item The \ac{DLS} threshold value is restricted to between $-1$ and $40$ dB;
+	\item The minimum MD value is restricted to $-30$ dB;
+	\item The \ac{DLS} threshold value is restricted to between $-1$ and $40$ dB;\footnote{$-1$ dB because the Rotterdam dataset includes some field thresholds at $-1$ dB, likely indicating a $<0$ dB result on the \ac{HFA}.} 
 	\item Visual field sensitivity does not improve, i.e. the prediction value is always less sensitive than the last data point available.
 \end{enumerate}
 
@@ -201,7 +199,7 @@ The average whole field point-wise prediction \ac{MAE} for prediction data serie
 \textrm{MAE}_{\textrm{VF}} = \frac{1}{54N}\sum_{i=1}^{54}\left|\widehat{\textrm{VF}}_i^{(n)}-\textrm{VF}_i^{(n)} \right|
 \end{equation}
 
-\begin{figure}[p]
+\begin{figure}[t!]
 	\centering
 	\begin{subfigure}{0.49\textwidth}
 		\centering
@@ -239,7 +237,7 @@ The average whole field point-wise prediction \ac{MAE} for prediction data serie
 
 \begin{table}[t]
 \centering
-\caption[Extrapolation method performance for predicting the 10th field]{Extrapolation method performance for predicting the 10th field}
+\caption[Extrapolation method performance for predicting the 10th field]{Extrapolation method performance for predicting the 10th field} \label{tab:extrapresult}
 (25\%/50\%/75\% are the 25-th percentile/median/75-th percentile respectively)
 \begin{tabular}{@{}llrrrrr}
 	\toprule
@@ -409,9 +407,8 @@ The average whole field point-wise prediction \ac{MAE} for prediction data serie
 
 \subsection{Results and Discussion} \label{sec:extrapresult}
 
-\Cref{fig:extrapresultmd6} illustrates the typical clinical progression prediction method. In a typical situation where $6$ fields are used to estimate future MD value after $5$ years (i.e. approximately ``next 10th''), the expected error is $2.4$ dB. Interestingly, simply predicting using the mean ($2.0$ dB), median ($2.0$ dB), or even the extrapolation ($1.9$ dB) approach achieves lower prediction error after $10$ fields. This somewhat surprising result in fact agrees with the previous observation that much of the dataset was not progressing. This illustrates that glaucoma, in many cases and definitely in this dataset, is a very slowly progressing disease. This also potentially illustrates the limitation of the current \ac{OLSLR} approach. These values establishes a baseline against which the designed algorithm will be compared. 
+\Cref{fig:extrapresultmd6} illustrates the typical clinical progression prediction method. In a typical situation where $6$ fields are used to estimate future MD value after $5$ years (i.e. approximately ``next 10th''), the mean and median \ac{MAE} is $2.3$ and $1.6$ dB, respectively. Simply repeating the mean ($1.8$ dB), median ($1.8$ dB), or last ($1.8$ dB) observation achieves lower prediction error after $10$ fields. (See \cref{tab:extrapresult}) This somewhat surprising result in fact agrees with the previous observation that much of the dataset was not progressing. This illustrates that glaucoma, in many cases and definitely in this dataset, is a very slowly progressing disease. Fitting a predetermined function may severely overfit a non-existent trend, a potential limitation of the current \ac{OLSLR} approach. 
 
 In \cref{fig:extrapresult}, it is observed that within each table the error increases as fields further in the future are to be predicted, as expected. Fewer input fields ($3$ versus $6$) also resulted in higher error, as expected. The point-wise prediction task is harder than the MD prediction task due to the nature of MD being a summary statistics that averages errors across the field. 
 
-
-
+These values establishes a baseline against which the algorithm designs in \cref{chapter:methods} will be compared. 

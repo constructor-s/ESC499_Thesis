@@ -179,7 +179,7 @@
 %% *** Put your Abstract here. ***
 %% (At most 150 words for M.Sc. or 350 words for Ph.D.)
 %%Up to 250 words, single-spaced in block form in centre of separate page.
-Glaucoma progression prediction is crucial for medical doctors to make clinical decisions. Visual field testing is one of the most important tools to functionally detect vision loss due to glaucoma. Current standard prediction method (\ac{OLSLR} on \ac{MD}) requires at least 5--6 visual fields, or approximately 2 years assuming a semi-annual follow-up interval, to obtain a good estimate of the progression rate. This thesis investigates if \acf{ML} methods can produce better predictions of (1) future \ac{MD} and (2) point-wise field thresholds using the Rotterdam dataset (N=249 eyes). All models, including linear models, \ac{CNN}, and \ac{RNN}, performed similarly on this dataset and performed better than linear extrapolation in terms of \ac{MAE}. However, the performance of these algorithms is similar to assuming no change in the field because the dataset consists primarily of stable patients. Future studies should be based on a more comprehensive dataset. 
+Glaucoma progression prediction is crucial for making clinical decisions. Visual field testing is one of the most important tools to functionally detect vision loss due to glaucoma. Current standard prediction method (\ac{OLSLR} on \ac{MD}) requires at least 5--6 tested visual fields, or approximately 2 years assuming a semi-annual follow-up interval, to obtain a good estimate of the progression rate. This thesis investigates if \acl{ML} methods can produce better predictions of (1) future \ac{MD} and (2) point-wise field thresholds using the Rotterdam dataset ($N=249$ eyes). All models, including linear models, \ac{CNN}, and \ac{RNN}, performed similarly on this dataset and performed better than \ac{OLSLR}-based extrapolation in terms of \ac{MAE}. However, the performance of these algorithms is similar to simply assuming no change in the field because the dataset consists primarily of stable patients. Future studies should be based on a more comprehensive dataset by including older patients and/or different glaucoma types that are more likely to progress. 
 
 \end{abstract}
 
@@ -211,7 +211,7 @@ Glaucoma progression prediction is crucial for medical doctors to make clinical 
 %% (uncomment to have it appear in the document).
 \begin{acknowledgements}
 %% *** Put your Acknowledgements here. ***
-I would like to acknowledge first and foremost my supervisor Professor Eizenman who has now supervised my various work for three years. As I embark on my post-graduate studies and future career, I will never forget the impact of his mentoring on my training to become a researcher. For this specific project, I would like thank my colleagues, especially Yan (Leo) Li, for their support, teaching me various aspects of machine learning, and the thoughtful discussions that we had together. I want to thank all of my friends in the Engineering Science program, without whose support during the difficult times I would not be here today. Last but not least, I want to thank my family for their support in the last five years of my undergraduate studies that have allowed me pursuit my dream of becoming a successful researcher. I will always be grateful for their unreserved support in the past, present, and next steps of my life. 
+I would like to acknowledge first and foremost my supervisor Professor Eizenman who has now supervised my work for three years. As I embark on my post-graduate studies and future career, I will never forget the impact of his mentoring on my training to become a researcher. For this specific project, I would like thank my colleagues, especially Yan (Leo) Li, for their support, teaching me various aspects of machine learning, and the thoughtful discussions that we had together. I want to thank all of my friends in the Engineering Science program, without whose support during the difficult times I would not be here today. Last but not least, I want to thank my family for their support in the last five years of my undergraduate studies that have allowed me pursuit my dream of becoming a successful researcher. I will always be grateful for their unreserved support in the past, present, and future of my life. 
 \end{acknowledgements}
 
 %% This generates the Table of Contents (on a separate page).
@@ -231,32 +231,40 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 
 \chapter*{List of Abbreviations}
 \begin{acronym}[OLSLR]
-	\acro{RNFL}{retinal nerve fibre layer}
-	\acro{HFA}{Humphrey Field Analyzer}
-	\acro{IOP}{intraocular pressure}
-	\acro{OCT}{optical coherence tomography}
-	\acro{VF}{visual field}
-	\acro{LSTM}{long short-term memory}
-	\acro{CNN}{convolutional neural network}
-	\acro{RNN}{recurrent neural network}
-	\acro{MD}{Mean Deviation}
-	\acro{PSD}{Pattern Standard Deviation}
-	\acro{VFI}{Visual Field Index}
-	\acro{GHT}{Glaucoma Hemifield Test}
-	\acro{DLS}{differential light sensitivity}
-	\acro{OLSLR}{ordinary least-squares linear regression}
-	\acro{MAE}{mean absolute error}
-	\acro{MSE}{mean squared error}
-	\acro{ML}{machine learning}
-	\acro{RL}{reinforcement learning}
-	\acro{MLP}{multi-layer perceptron}
-	\acro{EMGT}{Early Manifest Glaucoma Trial}
-	\acro{CGS}{Canadian Glaucoma Study}
+\acro{CGS}{Canadian Glaucoma Study}
+\acro{CNN}{convolutional neural network}
+\acro{DLS}{differential light sensitivity}
+\acro{EMGT}{Early Manifest Glaucoma Trial}
+\acro{GHT}{Glaucoma Hemifield Test}
+\acro{HFA}{Humphrey Field Analyzer}
+\acro{IOP}{intraocular pressure}
+\acro{LSTM}{long short-term memory}
+\acro{MAE}{mean absolute error}
+\acro{MD}{Mean Deviation}
+\acro{MLP}{multi-layer perceptron}
+\acro{ML}{machine learning}
+\acro{MSE}{mean squared error}
+\acro{OCT}{optical coherence tomography}
+\acro{OLSLR}{ordinary least-squares linear regression}
+\acro{PSD}{Pattern Standard Deviation}
+\acro{RL}{reinforcement learning}
+\acro{RNFL}{retinal nerve fibre layer}
+\acro{RNN}{recurrent neural network}
+\acro{VF}{visual field}
+\acro{VFI}{Visual Field Index}
 \end{acronym}
 
+\newacroindefinite{IOP}{an}{a}
+\newacroindefinite{LSTM}{an}{a}
+\newacroindefinite{MAE}{an}{a}
+\newacroindefinite{MD}{an}{a}
+\newacroindefinite{ML}{an}{a}
 \newacroindefinite{MLP}{an}{a}
+\newacroindefinite{RL}{an}{a}
+\newacroindefinite{OCT}{an}{a}
 \newacroindefinite{HFA}{an}{a}
 \newacroindefinite{RNN}{an}{a}
+\newacroindefinite{OLSLR}{an}{a}
 
 %% End of the preliminary sections: reset page style and numbering.
 \end{preliminary}
