@@ -179,7 +179,8 @@
 %% *** Put your Abstract here. ***
 %% (At most 150 words for M.Sc. or 350 words for Ph.D.)
 %%Up to 250 words, single-spaced in block form in centre of separate page.
-\lipsum[1]
+Glaucoma progression prediction is crucial for medical doctors to make clinical decisions. Visual field testing is one of the most important tools to functionally detect vision loss due to glaucoma. Current standard prediction method (\ac{OLSLR} on \ac{MD}) requires at least 5--6 visual fields, or approximately 2 years assuming a semi-annual follow-up interval, to obtain a good estimate of the progression rate. This thesis investigates if machine learning methods can produce better predictions of future \ac{MD} and point-wise field thresholds using the Rotterdam dataset (N=249 eyes). All models, including linear models, \ac{CNN}, and \ac{RNN} performed similarly on this dataset and performed better than linear extrapolation in terms of \ac{MAE}. However, the performance is similar to assuming no change in the field because the dataset consists primarily of stable patients. Future studies should be based on a more comprehensive dataset. 
+
 \end{abstract}
 
 %% Anything placed between the abstract and table of contents will
@@ -246,10 +247,13 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 	\acro{ML}{machine learning}
 	\acro{RL}{reinforcement learning}
 	\acro{MLP}{multi-layer perceptron}
+	\acro{EMGT}{Early Manifest Glaucoma Trial}
+	\acro{CGS}{Canadian Glaucoma Study}
 \end{acronym}
 
 \newacroindefinite{MLP}{an}{a}
 \newacroindefinite{HFA}{an}{a}
+\newacroindefinite{RNN}{an}{a}
 
 %% End of the preliminary sections: reset page style and numbering.
 \end{preliminary}
@@ -294,6 +298,8 @@ I would like to acknowledge first and foremost my supervisor Professor Eizenman 
 
 \begin{appendices}
 	\include{chapter-code}
+	
+	\include{chapter-rotterdam}
 \end{appendices}
 
 \end{document}

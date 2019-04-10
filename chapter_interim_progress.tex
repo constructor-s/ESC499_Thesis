@@ -61,6 +61,8 @@ To investigate the progression rate in the sample, an \ac{OLSLR} regression line
 
 It is important to note that glaucoma is a very slowly progressing disease. In addition, the data is collected from patients who are undergoing standard treatment. Moreover, both eyes of a glauocma patient are tested, and a patient can often have one glaucomatous eye and another healthy eye. As a result, we see many patients who are healthy (close to $0$ MD) and not progressing (close to $0$ MD/yr).
 
+The inclusion/exclusion criteria and further information about the dataset can be found in \cref{chapter:rotterdam}.
+
 \section{Performance of Simple Extrapolators}
 
 In this section, using the Rotterdam dataset, we establish a baseline prediction performance using ``naive'' extrapolation methods. 
@@ -405,7 +407,7 @@ The average whole field point-wise prediction \ac{MAE} for prediction data serie
 %	%\end{table}
 %\end{minipage}
 
-\subsection{Results and Discussion}
+\subsection{Results and Discussion} \label{sec:extrapresult}
 
 \Cref{fig:extrapresultmd6} illustrates the typical clinical progression prediction method. In a typical situation where $6$ fields are used to estimate future MD value after $5$ years (i.e. approximately ``next 10th''), the expected error is $2.4$ dB. Interestingly, simply predicting using the mean ($2.0$ dB), median ($2.0$ dB), or even the extrapolation ($1.9$ dB) approach achieves lower prediction error after $10$ fields. This somewhat surprising result in fact agrees with the previous observation that much of the dataset was not progressing. This illustrates that glaucoma, in many cases and definitely in this dataset, is a very slowly progressing disease. This also potentially illustrates the limitation of the current \ac{OLSLR} approach. These values establishes a baseline against which the designed algorithm will be compared. 
 
