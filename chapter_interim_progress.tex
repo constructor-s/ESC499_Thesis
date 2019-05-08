@@ -82,7 +82,7 @@ Two prediction tasks are evaluated:
 
 The input to the algorithms consists of time (age) at each field examination, and the respective \ac{MD} or point-wise field thresholds. Both tasks are evaluated with $3$ and $6$ input (``known'') fields to predict the next future first, second, third, \dots \acl{VF} results. Having $6$ inputs is similar to the current clinical guidelines \cite{Chauhan2008}. Using only $3$ inputs would be more ideal for earlier detection and used for training learning algorithms. 
 
-To fully utilize the the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields approximately $6$ months apart are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. Details on the generation of testing dataset is described in \cref{sec:datasetgeneration}.
+To fully utilize the data available, all combinations (``prediction series'') of $3$ or $6$ consecutive fields approximately $6$ months apart are used for evaluation. For example, for a patient with fields $1$ to $5$, fields $1$ to $3$ are used to predict $4$ and $5$ and fields $2$ to $4$ are used to predict $5$. Details on the generation of testing dataset is described in \cref{sec:datasetgeneration}.
 
 \begin{figure}[p]
 	\centering
@@ -411,4 +411,4 @@ The average whole field point-wise prediction \ac{MAE} for prediction data serie
 
 In \cref{fig:extrapresult}, it is observed that within each table the error increases as fields further in the future are to be predicted, as expected. Fewer input fields ($3$ versus $6$) also resulted in higher error, as expected. The point-wise prediction task is harder than the MD prediction task due to the nature of MD being a summary statistics that averages errors across the field. 
 
-These values establishes a baseline against which the algorithm designs in \cref{chapter:methods} will be compared. 
+These values establish a baseline against which the algorithm designs in \cref{chapter:methods} will be compared. 

@@ -1,6 +1,6 @@
 \chapter{Learning Methods} \label{chapter:methods}
 
-This chapter provides a framing of the visual field progression prediction tasks introduced before as learning problems, and introduces the learning algorithm architectures to be evaluated against the Rotterdam dataset. 
+This chapter provides framing of the visual field progression prediction tasks introduced previously as learning problems, and introduces the learning algorithm architectures to be evaluated against the Rotterdam dataset. 
 
 \section{The Learning Task}
 
@@ -21,7 +21,7 @@ t^{(i)}
 \in \mathbb{R}^{57}
 \end{equation}
 
-where $t^{(i)}$ is the time of the visit, and $\textrm{VF}^{(i)}_j$ is the \ac{DLS} for the $j$-th point in the visual field. By convention of the visual field analysis tools developed by Marin-Franch et al. \cite{Marin-Franch2013}, all fields of the left (OS) eye are flipped horizontally (unmodified vertically) to match with the coordinates of the right eye, and then each visual field location is indexed from left to right, then top to bottom (same as the reading direction in English). Each of the vector component is normalized to approximately $[0, 1]$ in the range shown in \cref{tab:norm}.
+where $t^{(i)}$ is the time of the visit, and $\textrm{VF}^{(i)}_j$ is the \ac{DLS} for the $j$-th point in the visual field. By convention of the visual field analysis tools developed by Marin-Franch et al. \cite{Marin-Franch2013}, all fields of the left (OS) eye are flipped horizontally (unmodified vertically) to match with the coordinates of the right eye, and then each visual field location is indexed from left to right, then top to bottom (same as the reading direction in English). Each of the vector components is normalized to approximately $[0, 1]$ in the range shown in \cref{tab:norm}.
 
 \begin{table}[h]
 \centering
@@ -148,7 +148,7 @@ This section describes a range of simple to complex learning models that are pro
 
 \subsection{Ridge Regression}
 
-Ridge regression is a $L_2$-regularized linear regression\footnotemark that aims to minimize the combination of the sum squared cost and the $L_2$ norm of the weight parameters. By weighting on the model parameters, it is expected to yield a simpler model that is fit less toward specific noisy trends in the training set and generalizes better. The model prediction is: 
+Ridge regression is an $L_2$-regularized linear regression\footnotemark that aims to minimize the combination of the sum squared cost and the $L_2$ norm of the weight parameters. By weighting on the model parameters, it is expected to yield a simpler model that is fit less toward specific noisy trends in the training set and generalizes better. The model prediction is: 
 
 \footnotetext{In this document the term ``linear regression'' is intentionally avoided to avoid confusion with the simple linear extrapolation method by extrapolating each variable with a linear fit over time, which is often called the \ac{OLSLR} method.}
 
@@ -163,7 +163,7 @@ The objective is to minimize the regularized sums squared cost:
 \mathbf{W} \leftarrow \arg \min_{\mathbf{W}} ||\hat{\mathbf{Y}} - \mathbf{Y}||^2_2 + \lambda ||\mathbf{W}||^2_2
 \end{equation}
 
-This has the closed form solution, which is directly implemented:
+This has a closed form solution, which is directly implemented:
 
 \begin{equation}
 \mathbf{W} = \left(
@@ -196,12 +196,12 @@ The \ac{MLP} (also known as fully-connected neural network) model takes the 171 
 
 \subsection{Convolutional Neural Network}
 
-Convolutional Neural Network (CNN) is a type of neural network architecture that, thanks to the tremendous improvement in computational power recently, has shown tremendous performance in automatically learning to extract image features instead of requiring hand-crated features detection algorithms. Each visual field can be seen as an $8\times9$ image. This relatively low dimensionality, compared to the inputs to typical image recognitions tasks in which \acp{CNN} are applied, may leave limited room of improvement in the performance of \ac{CNN} over a simpler flat architecture such as \iac{MLP}. However, spatial patterns in the visual field are have been known to important to glaucoma diagnosis and progression (see \cref{fig:fieldpattern}), and \ac{CNN} is an architecture that is known to be able to extract such spatial information. 
+Convolutional Neural Network (CNN) is a type of neural network architecture that, thanks to the tremendous improvement in computational power recently, has shown tremendous performance in automatically learning to extract image features instead of requiring hand-crated features detection algorithms. Each visual field can be seen as an $8\times9$ image. This relatively low dimensionality, compared to the inputs to typical image recognition tasks in which \acp{CNN} are applied, may leave limited room of improvement in the performance of \ac{CNN} over a simpler flat architecture such as \iac{MLP}. However, spatial patterns in the visual field are have been known to important to glaucoma diagnosis and progression (see \cref{fig:fieldpattern}), and \ac{CNN} is an architecture that is known to be able to extract such spatial information. 
 
 \begin{figure}[p]
 	\centering
 	\includegraphics[width=\textwidth]{sample2004pattern}
-	\caption[Examples of typical patterns of glaucomatous visual field loss]{Examples of typical patterns of glaucomatous visual field loss that are known to be physiologically and clinically important for diagnosis and prediction. Such evidence is the motivation behind employing a \ac{CNN} achitecture that is likely to preserve and extract useful spatial information in the visual field. (Figure from Sample et al. \cite{Sample2004})}
+	\caption[Examples of typical patterns of glaucomatous visual field loss]{Examples of typical patterns of glaucomatous visual field loss that are known to be physiologically and clinically important for diagnosis and prediction. Such evidence is the motivation behind employing a \ac{CNN} architecture that is likely to preserve and extract useful spatial information in the visual field. (Figure from Sample et al. \cite{Sample2004})}
 	\label{fig:fieldpattern}
 \end{figure}
 
